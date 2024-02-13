@@ -1,0 +1,196 @@
+
+:root {
+  --background: 251,251,253;
+  --secondBackground: 255,255,255;
+  --text: #181818;
+  --navText: #181818;
+  --textSecondary: 255,255,255;
+  --textTitleGray: 160,160,160;
+  --primary: #0074B2;
+  --secondary: 10,18,30;
+  --tertiary: 231,241,251;
+  --cardBackground: 255,255,255;
+  --inputBackground: 255,255,255;
+  --navbarBackground: 255,255,255;
+  --modalBackground: 251,251,253;
+  --footerBackground: 255,255,255;
+  --errorColor: 207,34,46;
+  --grayBackground: 229, 229, 229;
+  --graySection: 67, 71, 82;
+  --black: 0,0,0;
+  --font: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0; 
+  font-family: var(--font-poppins);
+  font-size: 18px;
+}
+
+.first-child {
+  padding-top: 160px!important;
+  @media (max-width: 991px) {
+    padding-top: 140px!important;
+  }
+  @media (max-width: 768px) {
+    padding-top: 120px!important;
+  }
+}
+h1, h2,h3, h4, h5 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 45px;
+
+}
+h2 {
+  font-size: 35px;
+}
+h3 {
+  font-size: 30px;
+}
+h4 {
+  font-size: 25px;
+}
+h5 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+@media (max-width: 991px) {
+  h1 {
+    font-size: 35px;
+  
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 25px;
+  }
+  h4 {
+    font-size: 20px;
+  }
+  h5 {
+    font-size: 18px;
+  }
+}
+@media (max-width: 768px) {
+  h1 {
+    font-size: 30px;
+  
+  }
+  h2 {
+    font-size: 25px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+}
+
+
+/* global-styles.css */
+::placeholder {
+  font-family: 'Poppins', sans-serif; /* Adjust the font-family as needed */
+}
+/* Tabs.module.css */
+.tabs {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 300px;
+}
+
+.tab-buttons button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.cta-primary {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+  transition: transform 0.6s ease-in-out;
+}
+.cta-primary:hover svg {
+  transform: translateX(8px);    
+  transition: transform 0.3s ease-in-out;
+}
+
+.tab-buttons button.active {
+  background-color: #ddd;
+}
+
+.tab-content {
+  padding: 10px;
+}
+li.hasSubmenu button a {
+  color: #0074B2;
+}
+
+.large-text {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+ol li {
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+ol li::marker {
+  display: flex;
+}
+
+a {
+  color: var(--primary);
+}
+
+/* styles/modal.css */
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 70px 80px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  gap: 20px;
+}
