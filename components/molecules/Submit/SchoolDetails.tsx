@@ -1,6 +1,8 @@
 import api from '@/utils/api';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import AddParticipant from '@/components/organisms/Submit/AddParticipant';
+
 
 interface SchoolDetailsProps {
     index: number;
@@ -22,7 +24,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
     useEffect(() => {
         if (selectedCity) {
             api.get(`/schools/${selectedCity}`)
-            .then((response: { data: any }) => {
+            .then((response: { data: any }) => { 
                 setSchools(response.data.data);
             })
             .catch((error: any) => console.error('Error fetching schools:', error));
@@ -32,7 +34,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
 
     useEffect(() => {
         api.get('/cities')
-        .then((response: { data: any }) => {
+        .then((response: { data: any }) => { 
             console.log(response.data);
             setCities(response.data.data);
         })
@@ -77,6 +79,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                     </option>
                 ))}
             </select>
+            <AddParticipant />
         </SchoolRow>
     );  
 };

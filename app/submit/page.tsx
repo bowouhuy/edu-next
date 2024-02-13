@@ -10,7 +10,6 @@ import SchoolField from "@/components/molecules/Submit/SchoolDetails";
 import WithdrawCardInfo from '@/components/organisms/Dashboard/SubmitReferall/Withdraw';
 import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
-import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 
 
 const submitReferall = {
@@ -62,12 +61,6 @@ const WithdrawInfo = {
 
 
 const SubmitReferallPage: React.FC = () => {
-    // Select Data
-    // type SchoolData = {
-    //     name: string;
-    //     city: string;
-    // };
-    
     type SchoolDetail ={
         'school':string,
         'city':string,
@@ -147,7 +140,7 @@ const SubmitReferallPage: React.FC = () => {
                                         </select>
                                 </FieldRow>
                                 <FieldRow>
-                                    <label htmlFor="country">cHOOSE COUNTRY & GROUP UNIVERSITY</label>
+                                    <label htmlFor="country">CHOOSE COUNTRY & GROUP UNIVERSITY</label>
                                     <select id="country" name="country">
                                         <option value="">Select a Country & Group University</option>
                                         {eventDetails.countryGroupname.map((country, index) => (
@@ -171,7 +164,7 @@ const SubmitReferallPage: React.FC = () => {
                                             onSchoolChange={onSchoolChange}
                                         />
                                     ))}
-                                    <AddParticipant />
+                                    
                                     <AddMore type="button" onClick={addSchoolRow}>
                                         <PlusMinus />
                                         Add More School
