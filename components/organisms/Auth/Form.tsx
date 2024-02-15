@@ -1,60 +1,76 @@
 'use client'
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import ForgotPasswordModal from '@/components/molecules/Auth/Login/ForgotPassword';
 import Forms from '@/components/atoms/Form';
 import axios from 'axios';
+import { login } from '@/actions/auth';
+import { useForm } from 'react-hook-form';
+import loginValidation from '@/validations/loginForm';
+import ErrorField from '@/components/atoms/ErrorField';
 
+// Define the type of data that will be used in the form
+type LoginFormData = {
+  email: string;
+  password: string;
+}
 
-export default function Form (){
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Form() {
+  // Using react-hook-form to handle form validation
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<LoginFormData>({ resolver: loginValidation });
+  const [onLoading, setOnLoading] = useState(false);
 
-  const handleButtonLogin = (e: any) => {
-    e.preventDefault();
-    axios.post(process.env.NEXT_PUBLIC_API_URL +  'auth/login', {
-      email: e.currentTarget.email.value,
-      password: e.currentTarget.password.value
-    })
-    .then((response) => {
-      if(response.status === 200){
-        console.log(response.data)
-        localStorage.setItem('accessToken', response.data.data.token);
-        localStorage.setItem('refreshToken', response.data.data.token);
-      }else if(response.status === 401){
-        console.log('Unauthorized')
-      }
-    })
-  }
+  // handleSubmit is a function from react-hook-form to handle form submission
+  const handleButtonLogin = handleSubmit(async (data) => {
+    setOnLoading(true);
+    // Call login function from actions/auth.ts
+    const response = await login(data.email, data.password);
+    if (typeof response === 'boolean') {
+      alert('Error, check console');
+      setOnLoading(false);
+      return
+    }
+    alert('Login success');
+    setOnLoading(false);
+
+  })
   return (
     <div className='modal-root'>
-      <Forms id="login" onSubmit={(e) => handleButtonLogin(e)}>
+      <Forms id="login" onSubmit={handleButtonLogin}>
         <FieldRow>
           <input
             type="text"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email')}
             placeholder='Your Email'
             required
           />
-          <div>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              placeholder='Your Password'
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <ForgotPasswordModal/>
-            
-          </div>
-          
-          <button type="submit" >Login</button>
+          {errors.email &&
+            <ErrorField>
+              {errors.email.message}
+            </ErrorField>
+          }
           {/* <Button text={"Login"} /> */}
         </FieldRow>
-        </Forms>
+        <FieldRow>
+          <input
+            type="password"
+            id="password"
+            {...register('password')}
+            placeholder='Your Password'
+            required
+          />
+          {errors.password &&
+            <ErrorField>
+              {errors.password.message}
+            </ErrorField>
+          }
+          <ForgotPasswordModal />
+        </FieldRow>
+        <FieldRow>
+          <button disabled={onLoading} type="submit" >{!onLoading ? 'Login' : 'Loading'}</button>
+        </FieldRow>
+      </Forms>
     </div>
   )
 };
