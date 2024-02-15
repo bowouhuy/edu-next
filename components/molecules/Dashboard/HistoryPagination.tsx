@@ -1,4 +1,4 @@
-import { Transaction } from "@/types";
+import { Transaction } from "@/types/global";
 import React, { useState } from "react";
 import styled from "styled-components";
 

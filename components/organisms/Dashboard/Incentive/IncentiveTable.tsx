@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Incentive } from '@/types';
+import { Incentive } from '@/types/global';
 import styled from 'styled-components';
 import IncentivePagination from '@/components/molecules/Dashboard/IncentivePagination';
 

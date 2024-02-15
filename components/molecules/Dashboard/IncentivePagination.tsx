@@ -1,4 +1,4 @@
-import { Incentive } from "@/types";
+import { Incentive } from "@/types/global";
 import React, { useState } from "react";
 import styled from "styled-components";
 

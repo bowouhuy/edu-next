@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Incentive } from '@/types';
+import { Incentive } from '@/types/global';
 import styled from 'styled-components';
 import Heading from '@/components/atoms/Heading';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';

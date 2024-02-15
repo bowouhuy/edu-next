@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuItemType } from "@/types"
+import { MenuItemType } from "@/types/global"
 import MenuItem from "./MenuItem";
 import NavSubmenu from "@/components/atoms/NavSubmenu";
 

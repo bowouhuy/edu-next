@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Transaction } from '@/types';
+import { Transaction } from '@/types/global';
 import styled from 'styled-components';
 import HistoryPagination from '@/components/molecules/Dashboard/HistoryPagination';
 import ChangeAccountNumberModal from '@/components/molecules/Dashboard/AccountNumber';

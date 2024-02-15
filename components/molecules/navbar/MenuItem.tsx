@@ -1,7 +1,7 @@
 'use client'
 import Link from "next/link";
 import styled from "styled-components"
-import { MenuItemType } from "@/types";
+import { MenuItemType } from "@/types/global";
 import SubMenuDropdown from "./SubMenuDropdown";
 import NavItemWrapper from "@/components/atoms/NavItemWrap";
 import React, { useState, useEffect } from "react";

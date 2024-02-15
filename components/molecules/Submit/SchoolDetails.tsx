@@ -7,7 +7,7 @@ import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 interface SchoolDetailsProps {
     index: number;
     onCityChange: (index:number , city: string) => void;
-    onSchoolChange: (index:number , school: string) => void;
+    onSchoolChange: (index:number , school?: string) => void;
 }
 
 type Item ={

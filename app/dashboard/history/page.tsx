@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import HistoryTable from '@/components/organisms/Dashboard/BalanceHistory';
-import { Transaction } from '@/types';
+import { Transaction } from '@/types/global';
 import styled from 'styled-components';
 import Tooltip from '@/components/atoms/Tooltip';
 import QuestionMark from '@/components/atoms/QuestionMark';
