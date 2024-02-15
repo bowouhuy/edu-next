@@ -15,7 +15,7 @@ import styled from 'styled-components';
 const submitReferall = {
     title: 'Nihilne te nocturnum praesidium Palati, nihil urbis vigiliae.',
     bannerImage: '/images/heroBanner.jpg',
-    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet mattis ligula, in aliquet tellus. In accumsan ac justo non consequat. Donec mollis feugiat pharetra. ', 
+    shortDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet mattis ligula, in aliquet tellus. In accumsan ac justo non consequat. Donec mollis feugiat pharetra. ',
     ctaUrl: '/dashboard/profile',
     ctaText: 'Learn More'
 }
@@ -24,24 +24,24 @@ const eventDetails = {
     referallTypes: [
         { name: 'Study Abroad' },
         { name: 'English Program' },
-        { name: 'Events'}
+        { name: 'Events' }
     ],
-    countryGroupname :  [
+    countryGroupname: [
         { name: 'Indonesia', code: 'C1' },
         { name: 'Singapore', code: 'C2' },
         { name: 'Japan', code: 'C3' },
     ],
     schollName: [
-        { name: 'MAN 10 JOGLO', city: 'Jakarta'},
-        { name: 'SMA Al Kamal', city: 'Bandung'},
-        { name: 'MAN 11 JOGLO', city: 'Jakarta'},
-        { name: 'SMA Al Mukhlisin', city: 'Depok'},
-        { name: 'SMA Al Mukhlisin', city: 'Jakarta'},
+        { name: 'MAN 10 JOGLO', city: 'Jakarta' },
+        { name: 'SMA Al Kamal', city: 'Bandung' },
+        { name: 'MAN 11 JOGLO', city: 'Jakarta' },
+        { name: 'SMA Al Mukhlisin', city: 'Depok' },
+        { name: 'SMA Al Mukhlisin', city: 'Jakarta' },
     ]
 }
 
 const WithdrawInfo = {
-    affiliateInfo : [
+    affiliateInfo: [
         {
             title: 'affiliate',
             referall: '10',
@@ -61,21 +61,21 @@ const WithdrawInfo = {
 
 
 const SubmitReferallPage: React.FC = () => {
-    type SchoolDetail ={
-        'school':string,
-        'city':string,
+    type SchoolDetail = {
+        'school': string,
+        'city': string,
     }
-    const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([{school:'',city:''}]);
+    const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([{ school: '', city: '' }]);
 
-    const onCityChange = (index:number,value:string) => {
-        changeSchoolDetailValue('city',index,value);
+    const onCityChange = (index: number, value: string) => {
+        changeSchoolDetailValue('city', index, value);
     };
 
-    const onSchoolChange = (index:number, value:string) =>{
-        changeSchoolDetailValue('school',index,value);
+    const onSchoolChange = (index: number, value: string) => {
+        changeSchoolDetailValue('school', index, value);
     }
 
-    const changeSchoolDetailValue=(key:'city' | 'school',index:number, value:string) => {
+    const changeSchoolDetailValue = (key: 'city' | 'school', index: number, value: string) => {
         if (value) {
             let schoolDetail = schoolDetails;
             schoolDetail[index][key] = value;
@@ -89,7 +89,7 @@ const SubmitReferallPage: React.FC = () => {
     const addSchoolRow = () => {
         console.log('clicked')
         // Add a new empty school to the schools array
-        setSchoolDetails([...schoolDetails, {school:'',city:''}]);
+        setSchoolDetails([...schoolDetails, { school: '', city: '' }]);
     };
 
     // const removeDuplicates = (data: SchoolData[], property: keyof SchoolData) => {
@@ -108,20 +108,20 @@ const SubmitReferallPage: React.FC = () => {
     const [error, setError] = useState('');
 
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+        const formData = new FormData(event.currentTarget);
 
-    console.log('Form submitted successfully!', Object.fromEntries(formData));
-    setResponse('Form submitted successfully!');
-    setError('');
-    
-    
+        console.log('Form submitted successfully!', Object.fromEntries(formData));
+        setResponse('Form submitted successfully!');
+        setError('');
+
+
     }
 
     return (
         <>
-            <SubmitReferall data={submitReferall}/>
+            <SubmitReferall data={submitReferall} />
             <BasicSection>
                 <Container>
                     <ColParent>
@@ -130,14 +130,14 @@ const SubmitReferallPage: React.FC = () => {
                                 <FieldRow>
                                     <h4>Event Details</h4>
                                     <label htmlFor="referallType">TYPE OF REFERRAL </label>
-                                        <select id="referallType" name="referallType">  
-                                            <option value="">Select a Type of Referral</option>
-                                            {eventDetails.referallTypes.map((type, index) => (
-                                                <option key={index} value={type.name}>
-                                                    {type.name}
-                                                </option>
+                                    <select id="referallType" name="referallType">
+                                        <option value="">Select a Type of Referral</option>
+                                        {eventDetails.referallTypes.map((type, index) => (
+                                            <option key={index} value={type.name}>
+                                                {type.name}
+                                            </option>
                                         ))}
-                                        </select>
+                                    </select>
                                 </FieldRow>
                                 <FieldRow>
                                     <label htmlFor="country">CHOOSE COUNTRY & GROUP UNIVERSITY</label>
@@ -145,7 +145,7 @@ const SubmitReferallPage: React.FC = () => {
                                         <option value="">Select a Country & Group University</option>
                                         {eventDetails.countryGroupname.map((country, index) => (
                                             <option key={index} value={country.name}>
-                                            {country.name}
+                                                {country.name}
                                             </option>
                                         ))}
                                     </select>
@@ -161,10 +161,10 @@ const SubmitReferallPage: React.FC = () => {
                                             key={index}
                                             index={index}
                                             onCityChange={onCityChange}
-                                            onSchoolChange={onSchoolChange}
+                                            onSchoolChange={() => onSchoolChange(index, school.school)}
                                         />
                                     ))}
-                                    
+
                                     <AddMore type="button" onClick={addSchoolRow}>
                                         <PlusMinus />
                                         Add More School

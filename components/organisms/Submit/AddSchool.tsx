@@ -15,31 +15,38 @@ function AddSchool() {
 
     useEffect(() => {
         api.get('/cities')
-        .then((response: { data: any }) => {
-            console.log(response.data);
-            setCities(response.data.data);
-        })
-        .catch((error: any) => console.error('Error fetching cities:', error));
+            .then((response: { data: any }) => {
+                console.log(response.data);
+                setCities(response.data.data);
+            })
+            .catch((error: any) => console.error('Error fetching cities:', error));
     }, []);
 
-    const onCityChange = (event:any) => {
-        setSelectedCity(event.target.value);
+    const onCityChange = (index: number, city?: string) => {
+        setSelectedCity(index.toString());
         // Clear the selected school when the city changes
-        setSelectedSchool('');
+        // setSchoolsData('');
     };
+
+    const onSchoolChange = (index: number, school?: string) => {
+        // Update the school data when the school changes
+        // setSchoolsData('');
+    }
     // Function to add the initial SchoolDetails component
     const addInitialSchools = () => {
         setSchools([
             <SchoolDetails
                 key={0}
-                cityId={`city-0`}
-                cityName={`City`}
-                schoolNameId={`schoolId-0`}
-                schoolName={`School Name`}
-                selectedCity={selectedCities[0]}
-                onCityChange={selectedCity(0)}
-                cities={cities}
-                schools={schoolsData[0]}
+                index={0}
+                // cityId={`city-0`}
+                // cityName={`City`}
+                // schoolNameId={`schoolId-0`}
+                // schoolName={`School Name`}
+                // selectedCity={selectedCities[0]}
+                onCityChange={(index, city) => onCityChange(index)}
+                onSchoolChange={(index, school) => onSchoolChange(index, school)}
+            // cities={cities}
+            // schools={schoolsData[0]}
             />,
         ]);
         setSchoolsCount(0);
@@ -47,11 +54,11 @@ function AddSchool() {
 
     useEffect(() => {
         if (selectedCity) {
-        api.get(`/schools/${selectedCity}`)
-            .then((response: { data: any }) => {
-            setSchools(response.data.data);
-            })
-            .catch((error: any) => console.error('Error fetching schools:', error));
+            api.get(`/schools/${selectedCity}`)
+                .then((response: { data: any }) => {
+                    setSchools(response.data.data);
+                })
+                .catch((error: any) => console.error('Error fetching schools:', error));
         }
     }, [selectedCity]);
 
@@ -60,16 +67,29 @@ function AddSchool() {
         const newCount = schoolCount + 1;
         setSchools((prevSchools) => [
             ...prevSchools,
+            // <SchoolDetails
+            //     key={newCount}
+            //     cityId={`city-${newCount}`}
+            //     cityName={`City`}
+            //     schoolNameId={`schoolId-${newCount}`}
+            //     schoolName={`School Name`}
+            //     selectedCity={selectedCities[newCount]}
+            //     onCityChange={selectedCity}
+            //     cities={cities}
+            //     schools={schoolsData[newCount]}
+            // />,
             <SchoolDetails
                 key={newCount}
-                cityId={`city-${newCount}`}
-                cityName={`City`}
-                schoolNameId={`schoolId-${newCount}`}
-                schoolName={`School Name`}
-                selectedCity={selectedCities[newCount]}
-                onCityChange={selectedCity}
-                cities={cities}
-                schools={schoolsData[newCount]}
+                index={newCount}
+                // cityId={`city-0`}
+                // cityName={`City`}
+                // schoolNameId={`schoolId-0`}
+                // schoolName={`School Name`}
+                // selectedCity={selectedCities[0]}
+                onCityChange={(index, city) => onCityChange(index)}
+                onSchoolChange={(index, school) => onSchoolChange(index, school)}
+            // cities={cities}
+            // schools={schoolsData[0]}
             />,
         ]);
         setSchoolsCount(newCount);

@@ -5,6 +5,7 @@ import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 
 
 interface SchoolDetailsProps {
+    // key : number;
     index: number;
     onCityChange: (index:number , city: string) => void;
     onSchoolChange: (index:number , school?: string) => void;
