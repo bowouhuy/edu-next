@@ -2,21 +2,24 @@ import api from '@/utils/api';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AddParticipant from '@/components/organisms/Submit/AddParticipant';
+import { Participant } from '@/types/referral';
 
 
 interface SchoolDetailsProps {
     // key : number;
     index: number;
-    onCityChange: (index:number , city: string) => void;
-    onSchoolChange: (index:number , school?: string) => void;
+    onCityChange: (index: number, city: string) => void;
+    onSchoolChange: (index: number, school: string) => void;
+    onParticipantChange: (index: number, indexParticipant: number, participant: Participant) => void;
+    onParticipantNew: (index: number, participant: Participant) => void;
 }
 
-type Item ={
+type Item = {
     'id': string
     'name': string
 }
 
-const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange}) => {
+const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew }) => {
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [selectedSchool, setSelectedSchool] = useState<string>('');
     const [cities, setCities] = useState<Item[]>([]);
@@ -25,41 +28,41 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
     useEffect(() => {
         if (selectedCity) {
             api.get(`/schools/${selectedCity}`)
-            .then((response: { data: any }) => { 
-                setSchools(response.data.data);
-            })
-            .catch((error: any) => console.error('Error fetching schools:', error));
+                .then((response: { data: any }) => {
+                    setSchools(response.data.data);
+                })
+                .catch((error: any) => console.error('Error fetching schools:', error));
         }
     }, [selectedCity]);
 
 
     useEffect(() => {
         api.get('/cities')
-        .then((response: { data: any }) => { 
-            console.log(response.data);
-            setCities(response.data.data);
-        })
-        .catch((error: any) => console.error('Error fetching cities:', error));
+            .then((response: { data: any }) => {
+                // console.log(response.data);
+                setCities(response.data.data);
+            })
+            .catch((error: any) => console.error('Error fetching cities:', error));
     }, []);
 
-    const onHandleCityChange=(value:string)=>{
+    const onHandleCityChange = (value: string) => {
         setSelectedCity(value);
-        onCityChange(index,value)
+        onCityChange(index, value)
     }
 
-    const onHandleSchoolChange=(value:string)=>{
+    const onHandleSchoolChange = (value: string) => {
         setSelectedSchool(value);
-        onSchoolChange(index,value);
+        onSchoolChange(index, value);
     }
 
     return (
         <SchoolRow>
             <h4>School Details</h4>
             <span></span>
-            <label htmlFor={'city-'+index}>City</label>
+            <label htmlFor={'city-' + index}>City</label>
             <select
-                id={'city-'+index}
-                name={'city'+index}
+                id={'city-' + index}
+                name={'city' + index}
                 value={selectedCity}
                 onChange={(e) => onHandleCityChange(e.target.value)}
             >
@@ -71,8 +74,8 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 ))}
             </select>
 
-            <label htmlFor={'school-'+index}>School</label>    
-            <select id={'school-'+index} name={'school'+index} value={selectedSchool} onChange={(e)=>onHandleSchoolChange(e.target.value)}>
+            <label htmlFor={'school-' + index}>School</label>
+            <select id={'school-' + index} name={'school' + index} value={selectedSchool} onChange={(e) => onHandleSchoolChange(e.target.value)}>
                 <option value="">Choose a School Name</option>
                 {schools && schools.map((school, index) => (
                     <option key={index} value={school.id}>
@@ -80,9 +83,11 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                     </option>
                 ))}
             </select>
-            <AddParticipant />
+            <AddParticipant
+                onNew={(value) => onParticipantNew(index, value)}
+                onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />
         </SchoolRow>
-    );  
+    );
 };
 
 export default SchoolDetails;

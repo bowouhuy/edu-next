@@ -3,56 +3,72 @@ import styled from 'styled-components';
 import PlusMinus from '@/components/atoms/PlusMinus';
 import ParticipantField from '@/components/molecules/Submit/Participant';
 import AddMore from '@/components/atoms/AddMore';
+import { Participant } from '@/types/referral';
 
-function AddParticipant() {
+interface AddParticipantProps {
+    onChange: (indexParticipant: number, value: Participant) => void;
+    onNew: (value: Participant) => void;
+}
+
+const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew }) => {
     const [participants, setParticipants] = useState<JSX.Element[]>([]);
     const [participantCount, setParticipantCount] = useState(0);
 
+    const handleChange = (indexParticipant: number, value: Participant) => {
+        console.log('indexParticipant:', indexParticipant);
+        if (indexParticipant !== undefined) {
+            onChange(indexParticipant, value);
+        } else {
+            onNew(value);
+        }
+    }
     // Function to add the initial ParticipantField
     const addInitialParticipant = () => {
         setParticipants([
             <ParticipantField
                 key={0}
-                fullNameId={`fullname-name-0`}
-                phoneNumberId={`phone-number-0`}
-                partcipantName={'participant-name-0'} 
-                phoneNumberName={'participant-number-0'}            
+                index={0}
+                onChange={handleChange}
             />,
         ]);
         setParticipantCount(0);
     };
 
     useEffect(() => {
-        addInitialParticipant(); 
+        addInitialParticipant();
     }, []);
 
     const addParticipantRow = () => {
         const newCount = participantCount + 1;
-
+        onNew({
+            fullName: '',
+            phoneNumber: '',
+        });
         setParticipants((prevParticipants) => [
             ...prevParticipants,
             <ParticipantField
                 key={newCount}
-                fullNameId={`participant-${newCount}`}
-                phoneNumberId={`phone-number-${newCount}`} 
-                partcipantName={`participant-name-${newCount}`} 
-                phoneNumberName={`participant-number-${newCount}`}            
+                index={newCount}
+                onChange={handleChange}
             />,
         ]);
         setParticipantCount(newCount);
+
     };
 
 
-    return (    
-        <ParticipantParent>
-            {participants.map((participant) => (
-                <div key={participant.key}>{participant}</div>
-            ))}
+    return (
+        <>
+            <ParticipantParent>
+                {participants.map((participant) => (
+                    <div key={participant.key}>{participant}</div>
+                ))}
 
-            <AddMore type="button" onClick={addParticipantRow}>
-                <PlusMinus /> ADD MORE PARTICIPANT
-            </AddMore>
-        </ParticipantParent>
+                <AddMore type="button" onClick={addParticipantRow}>
+                    <PlusMinus /> ADD MORE PARTICIPANT
+                </AddMore>
+            </ParticipantParent>
+        </>
     );
 }
 

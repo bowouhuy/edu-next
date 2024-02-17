@@ -1,29 +1,49 @@
-import React from 'react';
+import { Participant } from '@/types/referral';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 interface ParticipantFieldProps {
-    fullNameId: string;
-    phoneNumberId: string;
-    partcipantName: string;
-    phoneNumberName: string;
+    index: number
+    onChange: (index: number, value: Participant) => void;
+    // partcipantName: string;
+    // phoneNumberName: string;
 }
 
-export default function ParticipantField ({ fullNameId, phoneNumberId, partcipantName, phoneNumberName } : ParticipantFieldProps) {
+export default function ParticipantField({ index, onChange }: ParticipantFieldProps) {
+    const [fullName, setFullName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const fullNameId = `fullname-name-${index}`;
+    const phoneNumberId = `phone-number-${index}`;
+    const partcipantName = `participant-name-${index}`;
+    const phoneNumberName = `participant-number-${index}`;
+
+    const handleChange = (key: 'fullName' | 'phone', index: number, value: string) => {
+        if (key === 'fullName') {
+            setFullName(value);
+        } else {
+            setPhoneNumber(value);
+        }
+        onChange(index, {
+            fullName,
+            phoneNumber
+        });
+    }
+
+
+
     return (
-        <>      
-            <ParticipantRow>
-                <h4>PARTICIPANT DATA</h4>
-                    <div>
-                        <label htmlFor={fullNameId}>FULL NAME</label>
-                        <input id={fullNameId} name={partcipantName} type='text' placeholder='Participant Full Name'/>
-                    </div>
-                    <div>
-                        <label htmlFor={phoneNumberId}>Phone Number </label>
-                        <input id={phoneNumberId} name={phoneNumberName} type='text' placeholder='Participant Phone Number'/>
-                    </div>
-            </ParticipantRow>
-        </>
-    )   
+        <ParticipantRow>
+            <h4>PARTICIPANT DATA</h4>
+            <div>
+                <label htmlFor={fullNameId}>FULL NAME</label>
+                <input id={fullNameId} name={partcipantName} type='text' placeholder='Participant Full Name' value={fullName} onChange={(e) => handleChange('fullName', index, e.target.value)} />
+            </div>
+            <div>
+                <label htmlFor={phoneNumberId}>Phone Number </label>
+                <input id={phoneNumberId} name={phoneNumberName} type='text' placeholder='Participant Phone Number' value={phoneNumber} onChange={(e) => handleChange('phone', index, e.target.value)} />
+            </div>
+        </ParticipantRow>
+    )
 }
 
 

@@ -8,8 +8,10 @@ import SubmitReferall from '@/components/organisms/Dashboard/SubmitReferall/Hero
 import PlusMinus from "@/components/atoms/PlusMinus";
 import SchoolField from "@/components/molecules/Submit/SchoolDetails";
 import WithdrawCardInfo from '@/components/organisms/Dashboard/SubmitReferall/Withdraw';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import ClientMiddleware from '@/components/molecules/ClientMiddleware';
+import { Participant, SchoolDetail } from '@/types/referral';
 
 
 const submitReferall = {
@@ -61,10 +63,6 @@ const WithdrawInfo = {
 
 
 const SubmitReferallPage: React.FC = () => {
-    type SchoolDetail = {
-        'school': string,
-        'city': string,
-    }
     const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([{ school: '', city: '' }]);
 
     const onCityChange = (index: number, value: string) => {
@@ -75,6 +73,13 @@ const SubmitReferallPage: React.FC = () => {
         changeSchoolDetailValue('school', index, value);
     }
 
+    useEffect(() => {
+        console.log('The schoolDetails array has been updated:', schoolDetails);
+        // console.log(schoolDetails);
+    }, [schoolDetails]);
+
+
+
     const changeSchoolDetailValue = (key: 'city' | 'school', index: number, value: string) => {
         if (value) {
             let schoolDetail = schoolDetails;
@@ -84,6 +89,30 @@ const SubmitReferallPage: React.FC = () => {
         } else {
             console.error('Invalid event object or event.target.value is undefined.');
         }
+    }
+
+    /**
+     * Change the value of a participant in the schoolDetails array. If indexParticipant is provided, it will change the value of the participant in the specified school.
+     * @param index
+     * @param value 
+     * @param indexParticipant
+     *
+     * @returns void
+     */
+    const changeParticipantValue = (index: number, value: Participant, indexParticipant?: number) => {
+        console.log('indexParticipant:', indexParticipant, 'value:', value);
+        if (indexParticipant !== undefined) {
+            let participants = schoolDetails[index].participants
+            if (participants) {
+                participants[indexParticipant] = value;
+                schoolDetails[index].participants = participants;
+            } else {
+                schoolDetails[index].participants = [value];
+            }
+        } else {
+            schoolDetails[index].participants = [value];
+        }
+
     }
 
     const addSchoolRow = () => {
@@ -120,7 +149,7 @@ const SubmitReferallPage: React.FC = () => {
     }
 
     return (
-        <>
+        <ClientMiddleware>
             <SubmitReferall data={submitReferall} />
             <BasicSection>
                 <Container>
@@ -161,7 +190,9 @@ const SubmitReferallPage: React.FC = () => {
                                             key={index}
                                             index={index}
                                             onCityChange={onCityChange}
-                                            onSchoolChange={() => onSchoolChange(index, school.school)}
+                                            onSchoolChange={(i, v) => onSchoolChange(i, v)}
+                                            onParticipantChange={(index, indexParticipant, value) => changeParticipantValue(index, value, indexParticipant)}
+                                            onParticipantNew={(index, value) => changeParticipantValue(index, value)}
                                         />
                                     ))}
 
@@ -179,7 +210,7 @@ const SubmitReferallPage: React.FC = () => {
                     </ColParent>
                 </Container>
             </BasicSection>
-        </>
+        </ClientMiddleware>
     );
 };
 
