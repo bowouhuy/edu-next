@@ -26,7 +26,4 @@ const login = async (email: string, password: string) => {
   }
 };
 
-const setAccessToken = (token: any) => {
-};
-
 export {login}

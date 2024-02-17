@@ -5,7 +5,6 @@ import { Poppins } from 'next/font/google'
 import Footer from '@/components/organisms/Footer'
 import Navbar from '@/components/organisms/Navbar'
 import { GlobalStyle } from '@/components/themes/GlobalStyles'
-import Providers from './providers'
 
 export const metadata: Metadata = {
   title: 'Edurep Incentive',
@@ -66,9 +65,9 @@ export default function RootLayout({
       <body className={poppins.className}>
         <div id="root"></div>
         <Navbar />
-        <Providers>
+        {/* <Providers> */}
           {children}
-        </Providers>
+        {/* </Providers> */}
         <Footer />,
       </body>
     </html>

@@ -1,6 +1,7 @@
 'use client'
 import BasicSection from "@/components/atoms/BasicSection";
 import Container from "@/components/atoms/Container";
+import ClientMiddleware from "@/components/molecules/ClientMiddleware";
 import ThankyouSection from "@/components/organisms/Thankyou";
 import React from "react";
 
@@ -24,13 +25,13 @@ const thankyou = {
 
 export default function thankyouPage(){
     return (
-        <>
+        <ClientMiddleware>
             <BasicSection className="first-child">
                 <Container>
                     <ThankyouSection data={thankyou}/>
                 </Container>
             </BasicSection>
-        </>
+        </ClientMiddleware>
     )
 }
 

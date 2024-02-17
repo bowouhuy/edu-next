@@ -2,24 +2,27 @@
 import BasicSection from "@/components/atoms/BasicSection";
 import Container from "@/components/atoms/Container";
 import React from "react";
-import styled from "styled-components";                                                             
+import styled from "styled-components";
 import ContainerSideBar from "@/components/atoms/ContainerSideBar";
 import SideBarLayout from "@/components/molecules/SideBarMenu";
 import { media } from "@/utils/media";
+import ClientMiddleware from "@/components/molecules/ClientMiddleware";
 
 
-export default function layout({children}:{children:React.ReactNode}){
+export default function layout({ children }: { children: React.ReactNode }) {
     return (
-        <BasicSection className="first-child">
-            <Container>
-                <ContainerSideBar>
-                    <SideBarLayout />
-                    <Main>
-                        {children}
-                    </Main>
-                </ContainerSideBar>
-            </Container>
-        </BasicSection>
+        <ClientMiddleware>
+            <BasicSection className="first-child">
+                <Container>
+                    <ContainerSideBar>
+                        <SideBarLayout />
+                        <Main>
+                            {children}
+                        </Main>
+                    </ContainerSideBar>
+                </Container>
+            </BasicSection>
+        </ClientMiddleware>
     )
 }
 

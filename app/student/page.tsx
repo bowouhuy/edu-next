@@ -8,8 +8,9 @@ import { media } from "@/utils/media";
 import StudentListTable from '@/components/organisms/Dashboard/StudentList/StudentListTable';
 import BasicSection from '@/components/atoms/BasicSection';
 import Container from '@/components/atoms/Container';
+import ClientMiddleware from '@/components/molecules/ClientMiddleware';
 
-const dataStudent : StudentList[] = [
+const dataStudent: StudentList[] = [
    {
       name: 'Serena William',
       phoneNumber: '081223456789',
@@ -57,7 +58,7 @@ const dataStudent : StudentList[] = [
    },
    {
       name: 'Yasser Hartanto',
-      phoneNumber: '081223456789',  
+      phoneNumber: '081223456789',
       school: 'Don Bosco 2',
       programName: 'Study in Singapore - Group A',
       earning: 'Rp 120.000',
@@ -67,33 +68,33 @@ const dataStudent : StudentList[] = [
 ];
 
 const StudentsListPage: React.FC = () => {
-   
+
    return (
-      <>
+      <ClientMiddleware>
          <BasicSection className='first-child'>
             <Container>
                <IncentiveSection>
-                     <Heading>STUDENT LIST</Heading>
-                     <Tabs id='incentive-tabs'>
-                        <STabList>
-                           <STab>Study Abroad</STab>
-                           <STab>English Program</STab>
-                           <STab>Events</STab>
-                        </STabList>
-                        <STabPanel>
-                           <StudentListTable dataStudent={dataStudent} />
-                        </STabPanel>
-                        <STabPanel>
-                           <StudentListTable dataStudent={dataStudent} />
-                        </STabPanel>
-                        <STabPanel>
-                           <StudentListTable dataStudent={dataStudent}/>
-                        </STabPanel>
-                     </Tabs>
+                  <Heading>STUDENT LIST</Heading>
+                  <Tabs id='incentive-tabs'>
+                     <STabList>
+                        <STab>Study Abroad</STab>
+                        <STab>English Program</STab>
+                        <STab>Events</STab>
+                     </STabList>
+                     <STabPanel>
+                        <StudentListTable dataStudent={dataStudent} />
+                     </STabPanel>
+                     <STabPanel>
+                        <StudentListTable dataStudent={dataStudent} />
+                     </STabPanel>
+                     <STabPanel>
+                        <StudentListTable dataStudent={dataStudent} />
+                     </STabPanel>
+                  </Tabs>
                </IncentiveSection>
             </Container>
          </BasicSection>
-      </>
+      </ClientMiddleware>
    );
 };
 
