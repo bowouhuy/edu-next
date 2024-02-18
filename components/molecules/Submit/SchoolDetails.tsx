@@ -2,12 +2,13 @@ import api from '@/utils/api';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AddParticipant from '@/components/organisms/Submit/AddParticipant';
-import { Participant } from '@/types/referral';
+import { Participant, SchoolDetail } from '@/types/referral';
 
 
 interface SchoolDetailsProps {
     // key : number;
     index: number;
+    schoolDetails: SchoolDetail[];
     onCityChange: (index: number, city: string) => void;
     onSchoolChange: (index: number, school: string) => void;
     onParticipantChange: (index: number, indexParticipant: number, participant: Participant) => void;
@@ -19,11 +20,17 @@ type Item = {
     'name': string
 }
 
-const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew }) => {
+const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew, schoolDetails }) => {
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [selectedSchool, setSelectedSchool] = useState<string>('');
     const [cities, setCities] = useState<Item[]>([]);
     const [schools, setSchools] = useState<Item[]>([]);
+    // const [participants, setParticipants] = useState<Participant[]>(schoolDetails[index].participants);
+
+    // useEffect(() => {
+    //     setParticipants(schoolDetails[index].participants);
+    //     console.log('schoolDetails on Component SchoolDetails:', schoolDetails);
+    // }, [schoolDetails, index]);
 
     useEffect(() => {
         if (selectedCity) {
@@ -63,7 +70,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             <select
                 id={'city-' + index}
                 name={'city' + index}
-                value={selectedCity}
+                value={schoolDetails[index].city}
                 onChange={(e) => onHandleCityChange(e.target.value)}
             >
                 <option value="">Choose a City</option>
@@ -75,7 +82,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             </select>
 
             <label htmlFor={'school-' + index}>School</label>
-            <select id={'school-' + index} name={'school' + index} value={selectedSchool} onChange={(e) => onHandleSchoolChange(e.target.value)}>
+            <select id={'school-' + index} name={'school' + index} value={schoolDetails[index].school} onChange={(e) => onHandleSchoolChange(e.target.value)}>
                 <option value="">Choose a School Name</option>
                 {schools && schools.map((school, index) => (
                     <option key={index} value={school.id}>
@@ -85,6 +92,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             </select>
             <AddParticipant
                 onNew={(value) => onParticipantNew(index, value)}
+                participants={schoolDetails[index].participants}
                 onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />
         </SchoolRow>
     );

@@ -63,7 +63,19 @@ const WithdrawInfo = {
 
 
 const SubmitReferallPage: React.FC = () => {
-    const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([{ school: '', city: '' }]);
+    const initData: SchoolDetail =
+    {
+        school: '',
+        city: '',
+        participants: [
+            {
+                fullName: '',
+                phoneNumber: ''
+            }
+        ]
+    }
+
+    const [schoolDetails, setSchoolDetails] = useState<SchoolDetail[]>([{ ...initData }]);
 
     const onCityChange = (index: number, value: string) => {
         changeSchoolDetailValue('city', index, value);
@@ -72,12 +84,6 @@ const SubmitReferallPage: React.FC = () => {
     const onSchoolChange = (index: number, value: string) => {
         changeSchoolDetailValue('school', index, value);
     }
-
-    useEffect(() => {
-        console.log('The schoolDetails array has been updated:', schoolDetails);
-        // console.log(schoolDetails);
-    }, [schoolDetails]);
-
 
 
     const changeSchoolDetailValue = (key: 'city' | 'school', index: number, value: string) => {
@@ -89,6 +95,7 @@ const SubmitReferallPage: React.FC = () => {
         } else {
             console.error('Invalid event object or event.target.value is undefined.');
         }
+        console.log('The schoolDetails array has been updated:', schoolDetails);
     }
 
     /**
@@ -101,24 +108,27 @@ const SubmitReferallPage: React.FC = () => {
      */
     const changeParticipantValue = (index: number, value: Participant, indexParticipant?: number) => {
         console.log('indexParticipant:', indexParticipant, 'value:', value);
+        let newSchoolDetails = schoolDetails;
         if (indexParticipant !== undefined) {
             let participants = schoolDetails[index].participants
             if (participants) {
                 participants[indexParticipant] = value;
-                schoolDetails[index].participants = participants;
+                newSchoolDetails[index].participants = participants;
             } else {
-                schoolDetails[index].participants = [value];
+                newSchoolDetails[index].participants = [value];
             }
         } else {
-            schoolDetails[index].participants = [value];
+            newSchoolDetails[index].participants.push(value);
         }
+        setSchoolDetails([...newSchoolDetails]);
+        console.log('The schoolDetails array has been updated:', schoolDetails);
 
     }
 
     const addSchoolRow = () => {
         console.log('clicked')
         // Add a new empty school to the schools array
-        setSchoolDetails([...schoolDetails, { school: '', city: '' }]);
+        setSchoolDetails([...schoolDetails, { ...initData }]);
     };
 
     // const removeDuplicates = (data: SchoolData[], property: keyof SchoolData) => {
@@ -139,9 +149,10 @@ const SubmitReferallPage: React.FC = () => {
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        const formData = new FormData(event.currentTarget);
+        // const formData = new FormData(event.currentTarget);
 
-        console.log('Form submitted successfully!', Object.fromEntries(formData));
+        // console.log('Form submitted successfully!', Object.fromEntries(formData));
+        console.log('Form submitted successfully!', schoolDetails);
         setResponse('Form submitted successfully!');
         setError('');
 
@@ -189,6 +200,7 @@ const SubmitReferallPage: React.FC = () => {
                                         <SchoolField
                                             key={index}
                                             index={index}
+                                            schoolDetails={schoolDetails}
                                             onCityChange={onCityChange}
                                             onSchoolChange={(i, v) => onSchoolChange(i, v)}
                                             onParticipantChange={(index, indexParticipant, value) => changeParticipantValue(index, value, indexParticipant)}

@@ -1,33 +1,24 @@
 import { Participant } from '@/types/referral';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface ParticipantFieldProps {
     index: number
     onChange: (index: number, value: Participant) => void;
+    participant: Participant;
     // partcipantName: string;
     // phoneNumberName: string;
 }
 
-export default function ParticipantField({ index, onChange }: ParticipantFieldProps) {
-    const [fullName, setFullName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+export default function ParticipantField({ index, onChange, participant }: ParticipantFieldProps) {
+    // const [fullName, setFullName] = useState(participant.fullName);
+    // const [phoneNumber, setPhoneNumber] = useState(participant.phoneNumber);
     const fullNameId = `fullname-name-${index}`;
     const phoneNumberId = `phone-number-${index}`;
     const partcipantName = `participant-name-${index}`;
     const phoneNumberName = `participant-number-${index}`;
 
-    const handleChange = (key: 'fullName' | 'phone', index: number, value: string) => {
-        if (key === 'fullName') {
-            setFullName(value);
-        } else {
-            setPhoneNumber(value);
-        }
-        onChange(index, {
-            fullName,
-            phoneNumber
-        });
-    }
+    // // }
 
 
 
@@ -36,11 +27,11 @@ export default function ParticipantField({ index, onChange }: ParticipantFieldPr
             <h4>PARTICIPANT DATA</h4>
             <div>
                 <label htmlFor={fullNameId}>FULL NAME</label>
-                <input id={fullNameId} name={partcipantName} type='text' placeholder='Participant Full Name' value={fullName} onChange={(e) => handleChange('fullName', index, e.target.value)} />
+                <input id={fullNameId} name={partcipantName} type='text' placeholder='Participant Full Name' value={participant.fullName} onChange={(e) => onChange(index, { fullName: e.target.value, phoneNumber: participant.phoneNumber })} />
             </div>
             <div>
                 <label htmlFor={phoneNumberId}>Phone Number </label>
-                <input id={phoneNumberId} name={phoneNumberName} type='text' placeholder='Participant Phone Number' value={phoneNumber} onChange={(e) => handleChange('phone', index, e.target.value)} />
+                <input id={phoneNumberId} name={phoneNumberName} type='text' placeholder='Participant Phone Number' value={participant.phoneNumber} onChange={(e) => onChange(index, { fullName: participant.fullName, phoneNumber: e.target.value })} />
             </div>
         </ParticipantRow>
     )

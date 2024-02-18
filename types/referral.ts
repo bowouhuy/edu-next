@@ -1,5 +1,5 @@
 type SchoolDetail = {
-  participants?: Participant[];
+  participants: Participant[];
   school: string;
   city: string;
 };

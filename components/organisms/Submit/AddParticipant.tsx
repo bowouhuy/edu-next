@@ -6,13 +6,14 @@ import AddMore from '@/components/atoms/AddMore';
 import { Participant } from '@/types/referral';
 
 interface AddParticipantProps {
+    participants: Participant[];
     onChange: (indexParticipant: number, value: Participant) => void;
     onNew: (value: Participant) => void;
 }
 
-const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew }) => {
-    const [participants, setParticipants] = useState<JSX.Element[]>([]);
-    const [participantCount, setParticipantCount] = useState(0);
+const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, participants }) => {
+    // const [participants, setParticipants] = useState<JSX.Element[]>([]);
+    // const [participantCount, setParticipantCount] = useState(0);
 
     const handleChange = (indexParticipant: number, value: Participant) => {
         console.log('indexParticipant:', indexParticipant);
@@ -23,45 +24,51 @@ const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew }) => {
         }
     }
     // Function to add the initial ParticipantField
-    const addInitialParticipant = () => {
-        setParticipants([
-            <ParticipantField
-                key={0}
-                index={0}
-                onChange={handleChange}
-            />,
-        ]);
-        setParticipantCount(0);
-    };
+    // const addInitialParticipant = () => {
+    // setParticipants([
+    //     <ParticipantField
+    //         key={0}
+    //         index={0}
+    //         onChange={handleChange}
+    //     />,
+    // ]);
+    // setParticipantCount(0);
+    // };
 
-    useEffect(() => {
-        addInitialParticipant();
-    }, []);
+    // useEffect(() => {
+    //     addInitialParticipant();
+    // }, []);
 
     const addParticipantRow = () => {
-        const newCount = participantCount + 1;
+        // const newCount = participantCount + 1;
         onNew({
             fullName: '',
             phoneNumber: '',
         });
-        setParticipants((prevParticipants) => [
-            ...prevParticipants,
-            <ParticipantField
-                key={newCount}
-                index={newCount}
-                onChange={handleChange}
-            />,
-        ]);
-        setParticipantCount(newCount);
-
+        // setParticipants((prevParticipants) => [
+        //     ...prevParticipants,
+        //     <ParticipantField
+        //         key={newCount}
+        //         index={newCount}
+        //         onChange={handleChange}
+        //     />,
+        // ]);
+        // setParticipantCount(newCount);
     };
 
 
     return (
         <>
             <ParticipantParent>
-                {participants.map((participant) => (
-                    <div key={participant.key}>{participant}</div>
+                {participants.map((participant, index) => (
+                    <div key={index}>
+                        <ParticipantField
+                            participant={participant}
+                            key={index}
+                            index={index}
+                            onChange={handleChange}
+                        />
+                    </div>
                 ))}
 
                 <AddMore type="button" onClick={addParticipantRow}>
