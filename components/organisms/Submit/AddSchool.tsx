@@ -35,19 +35,19 @@ function AddSchool() {
     // Function to add the initial SchoolDetails component
     const addInitialSchools = () => {
         setSchools([
-            <SchoolDetails
-                key={0}
-                index={0}
-                // cityId={`city-0`}
-                // cityName={`City`}
-                // schoolNameId={`schoolId-0`}
-                // schoolName={`School Name`}
-                // selectedCity={selectedCities[0]}
-                onCityChange={(index, city) => onCityChange(index)}
-                onSchoolChange={(index, school) => onSchoolChange(index, school)}
-            // cities={cities}
-            // schools={schoolsData[0]}
-            />,
+            // <SchoolDetails
+            //     key={0}
+            //     index={0}
+            //     // cityId={`city-0`}
+            //     // cityName={`City`}
+            //     // schoolNameId={`schoolId-0`}
+            //     // schoolName={`School Name`}
+            //     // selectedCity={selectedCities[0]}
+            //     onCityChange={(index, city) => onCityChange(index)}
+            //     onSchoolChange={(index, school) => onSchoolChange(index, school)}
+            // // cities={cities}
+            // // schools={schoolsData[0]}
+            // />,
         ]);
         setSchoolsCount(0);
     };
@@ -78,19 +78,19 @@ function AddSchool() {
             //     cities={cities}
             //     schools={schoolsData[newCount]}
             // />,
-            <SchoolDetails
-                key={newCount}
-                index={newCount}
-                // cityId={`city-0`}
-                // cityName={`City`}
-                // schoolNameId={`schoolId-0`}
-                // schoolName={`School Name`}
-                // selectedCity={selectedCities[0]}
-                onCityChange={(index, city) => onCityChange(index)}
-                onSchoolChange={(index, school) => onSchoolChange(index, school)}
-            // cities={cities}
-            // schools={schoolsData[0]}
-            />,
+            // <SchoolDetails
+            //     key={newCount}
+            //     index={newCount}
+            //     // cityId={`city-0`}
+            //     // cityName={`City`}
+            //     // schoolNameId={`schoolId-0`}
+            //     // schoolName={`School Name`}
+            //     // selectedCity={selectedCities[0]}
+            //     onCityChange={(index, city) => onCityChange(index)}
+            //     onSchoolChange={(index, school) => onSchoolChange(index, school)}
+            // // cities={cities}
+            // // schools={schoolsData[0]}
+            // />,
         ]);
         setSchoolsCount(newCount);
         setSelectedCities((prevSelectedCities) => [...prevSelectedCities, cities[0]]);

@@ -13,6 +13,7 @@ interface SchoolDetailsProps {
     onSchoolChange: (index: number, school: string) => void;
     onParticipantChange: (index: number, indexParticipant: number, participant: Participant) => void;
     onParticipantNew: (index: number, participant: Participant) => void;
+    onParticipantDelete: (index: number, indexParticipant: number) => void;
 }
 
 type Item = {
@@ -20,7 +21,7 @@ type Item = {
     'name': string
 }
 
-const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew, schoolDetails }) => {
+const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew, onParticipantDelete, schoolDetails }) => {
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [selectedSchool, setSelectedSchool] = useState<string>('');
     const [cities, setCities] = useState<Item[]>([]);
@@ -67,6 +68,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             <h4>School Details</h4>
             <span></span>
             <label htmlFor={'city-' + index}>City</label>
+            {/* #TODO Tambah Delete School */}
             <select
                 id={'city-' + index}
                 name={'city' + index}
@@ -91,6 +93,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 ))}
             </select>
             <AddParticipant
+                onDelete={(indexParticipant) => onParticipantDelete(index, indexParticipant)}
                 onNew={(value) => onParticipantNew(index, value)}
                 participants={schoolDetails[index].participants}
                 onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />

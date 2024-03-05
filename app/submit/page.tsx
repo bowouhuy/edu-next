@@ -8,7 +8,7 @@ import SubmitReferall from '@/components/organisms/Dashboard/SubmitReferall/Hero
 import PlusMinus from "@/components/atoms/PlusMinus";
 import SchoolField from "@/components/molecules/Submit/SchoolDetails";
 import WithdrawCardInfo from '@/components/organisms/Dashboard/SubmitReferall/Withdraw';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ClientMiddleware from '@/components/molecules/ClientMiddleware';
 import { Participant, SchoolDetail } from '@/types/referral';
@@ -85,6 +85,11 @@ const SubmitReferallPage: React.FC = () => {
         changeSchoolDetailValue('school', index, value);
     }
 
+    const onSchoolDelete = (index: number) => {
+        let newSchools = schoolDetails;
+        newSchools.splice(index, 1);
+        setSchoolDetails([...newSchools]);
+    }
 
     const changeSchoolDetailValue = (key: 'city' | 'school', index: number, value: string) => {
         if (value) {
@@ -125,11 +130,20 @@ const SubmitReferallPage: React.FC = () => {
 
     }
 
+    const deleteParticipantValue = (index: number, indexParticipant: number) => {
+        let newSchoolDetails = schoolDetails;
+        let participants = newSchoolDetails[index].participants;
+        participants.splice(indexParticipant, 1);
+        newSchoolDetails[index].participants = participants;
+        setSchoolDetails([...newSchoolDetails]);
+    }
+
     const addSchoolRow = () => {
         console.log('clicked')
         // Add a new empty school to the schools array
         setSchoolDetails([...schoolDetails, { ...initData }]);
     };
+
 
     // const removeDuplicates = (data: SchoolData[], property: keyof SchoolData) => {
     // const uniqueValues: string[] = [];
@@ -197,15 +211,18 @@ const SubmitReferallPage: React.FC = () => {
                                     <label htmlFor="schoolName">City</label>
                                     {/* Render the existing school fields */}
                                     {schoolDetails.map((school, index) => (
-                                        <SchoolField
-                                            key={index}
-                                            index={index}
-                                            schoolDetails={schoolDetails}
-                                            onCityChange={onCityChange}
-                                            onSchoolChange={(i, v) => onSchoolChange(i, v)}
-                                            onParticipantChange={(index, indexParticipant, value) => changeParticipantValue(index, value, indexParticipant)}
-                                            onParticipantNew={(index, value) => changeParticipantValue(index, value)}
-                                        />
+                                        <Fragment key={index}>
+                                            <button onClick={() => onSchoolDelete(index)}>Hapus</button>
+                                            <SchoolField
+                                                index={index}
+                                                schoolDetails={schoolDetails}
+                                                onCityChange={onCityChange}
+                                                onSchoolChange={(i, v) => onSchoolChange(i, v)}
+                                                onParticipantDelete={(index, indexParticipant) => deleteParticipantValue(index, indexParticipant)}
+                                                onParticipantChange={(index, indexParticipant, value) => changeParticipantValue(index, value, indexParticipant)}
+                                                onParticipantNew={(index, value) => changeParticipantValue(index, value)}
+                                            />
+                                        </Fragment>
                                     ))}
 
                                     <AddMore type="button" onClick={addSchoolRow}>

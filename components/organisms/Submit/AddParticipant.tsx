@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PlusMinus from '@/components/atoms/PlusMinus';
 import ParticipantField from '@/components/molecules/Submit/Participant';
 import AddMore from '@/components/atoms/AddMore';
 import { Participant } from '@/types/referral';
+// import Button from '@/components/atoms/Button';
 
 interface AddParticipantProps {
     participants: Participant[];
     onChange: (indexParticipant: number, value: Participant) => void;
     onNew: (value: Participant) => void;
+    onDelete: (indexParticipant: number) => void;
 }
 
-const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, participants }) => {
+const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, participants, onDelete }) => {
     // const [participants, setParticipants] = useState<JSX.Element[]>([]);
     // const [participantCount, setParticipantCount] = useState(0);
 
@@ -61,14 +63,17 @@ const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, partic
         <>
             <ParticipantParent>
                 {participants.map((participant, index) => (
-                    <div key={index}>
-                        <ParticipantField
-                            participant={participant}
-                            key={index}
-                            index={index}
-                            onChange={handleChange}
-                        />
-                    </div>
+                    <Fragment key={index}>
+                        <button onClick={() => onDelete(index)}>Hapus</button>
+                        <div>
+                            <ParticipantField
+                                participant={participant}
+                                key={index}
+                                index={index}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </Fragment>
                 ))}
 
                 <AddMore type="button" onClick={addParticipantRow}>
