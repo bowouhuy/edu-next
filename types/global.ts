@@ -2,7 +2,7 @@
 // export type SingleNavItem = {
 //     title: string;
 //     href: string;
-//     active?: boolean, 
+//     active?: boolean,
 //     // children?: NavItems,
 //   };
 
@@ -27,10 +27,15 @@ export interface SideBarItemType {
 }
 
 export interface Transaction {
-    date: string;
-    transactionType: string;
-    amount: string;
-    bankNumber: string;
+    amount: number;
+    bank: string;
+    status: string;
+    description: string;
+    created_at: string;
+}
+
+export interface Balance{
+    potential_commission: number;
 }
 
 export interface Incentive {
@@ -38,7 +43,7 @@ export interface Incentive {
     programName: string;
     country: string;
     groupName: string;
-    amount: string;
+    amount: number;
 }
 
 export interface StudentList {
@@ -47,6 +52,17 @@ export interface StudentList {
     school: string;
     status: string;
     date: string;
+    programCategory: string;
     programName: string;
-    earning: string;
+    earning: number;
+}
+
+export interface ReferralType {
+    id: number;
+    name: string;
+}
+
+export interface ProgramName {
+    id: number;
+    name: string;
 }
