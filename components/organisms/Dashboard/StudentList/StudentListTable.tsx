@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StudentList } from '@/types/global';
 import styled from 'styled-components';
 import formatPrice, { formatDate, getMonthName } from "../../../../utils/helper";
@@ -14,8 +14,8 @@ interface StudentListTableProps {
 
 type QueryStudentList = {
   program_category?: number,
-  startDate?: string,
-  endDate?: string,
+  start_date?: string,
+  end_date?: string,
   status?: number
 }
 
@@ -40,10 +40,11 @@ function getClassBasedOnStatus(status: string) {
 const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) => {
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedMonth, setSelectedMonth] = useState('All');
-  const [selectedYear, setSelectedYear] = useState('All');
+  const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedYear, setSelectedYear] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState(7);
   const [filteredData, setFilteredData] = useState<StudentList[]>([]);
+  const [isLoad, setIsLoad] = useState(false);
   // const [selectedProgramCategory, setSelectedProgramCategory] = useState('All'); // Initialize with 'All'
 
   const onPageChange = (page: number) => {
@@ -51,27 +52,66 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
   };
 
   const filterData = (month: string, year: string, status: string) => {
-    setSelectedMonth(month);
-    setSelectedYear(year);
+    setSelectedMonth(parseInt(month));
+    setSelectedYear(parseInt(year));
     setSelectedStatus(parseInt(status));
   };
+  function getLastDateByMonth(year: number, month: number) {
+    let endDate = new Date(year, month + 1, 0);
+    return new Date(year, month, endDate.getDate())
+
+  }
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setIsLoad(true);
+
     const fetchFilteredData = async () => {
       try {
+
         let param: QueryStudentList = {}
         selectedEvent === 0 ? '' : param.program_category = selectedEvent
         selectedStatus === 7 ? '' : param.status = selectedStatus
+        let year = (new Date).getFullYear();
+        let isNoFilterDate = selectedMonth === 0 && selectedYear === 0;
+        if (!isNoFilterDate) {
+          let startDate = new Date(1980, 0, 1);
+          let endDate = getLastDateByMonth(year, 11);
+
+          endDate = new Date(year, endDate.getMonth(), endDate.getDate());
+
+          if (selectedYear !== 0) {
+            year = selectedYear
+            startDate.setFullYear(year);
+            endDate = getLastDateByMonth(year, 11);
+          }
+
+          if (selectedMonth !== 0) {
+            startDate.setMonth(selectedMonth - 1)
+            endDate = getLastDateByMonth(year, selectedMonth - 1)
+          }
+
+          param.start_date = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${(startDate.getDate()).toString().padStart(2, '0')}`
+          param.end_date = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${(endDate.getDate()).toString().padStart(2, '0')}`
+        }
+
         const response = await api.get(`submissions`, {
-          params: param
+          params: param,
+          signal: signal
         });
+        setIsLoad(false);
         setFilteredData(response.data.data);
         console.log(response.data.data);
       } catch (error) {
+        setIsLoad(false);
         console.error('Error fetching filtered data:', error);
       }
     };
 
     fetchFilteredData();
+    return () => {
+      controller.abort()
+    }
   }, [selectedMonth, selectedYear, selectedStatus, selectedEvent]);
   // useEffect(() => {
   //     let filtered = dataStudent;
@@ -101,7 +141,7 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
 
   const uniqueMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Agustus', 'September', 'October', 'November', 'December'];
   const uniqueYears = Array.from({ length: 51 }, (_, i) => new Date().getFullYear() - i);
-  const uniqueStatus = ['Registered', 'On Process', 'Successful', 'Cancelled', 'Paid', 'Failed','Withdrawal Requested'];
+  const uniqueStatus = ['Registered', 'On Process', 'Successful', 'Cancelled', 'Paid', 'Failed', 'Withdrawal Requested'];
 
   return (
     <>
@@ -109,11 +149,12 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
         <Column>
           <label htmlFor="month">FILTER BY MONTH</label>
           <select
+            disabled={isLoad}
             id="month"
-            onChange={(e) => filterData(e.target.value, selectedYear, selectedStatus.toString())}
+            onChange={(e) => filterData(e.target.value, selectedYear.toString(), selectedStatus.toString())}
             value={selectedMonth}
           >
-            <option value="All">All Months</option>
+            <option value={0}>All Months</option>
             {uniqueMonths.map((month, index) => (
               <option key={index} value={index + 1}>
                 {month}
@@ -124,11 +165,12 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
         <Column>
           <label htmlFor="year">FILTER BY YEAR</label>
           <select
+            disabled={isLoad}
             id="year"
-            onChange={(e) => filterData(selectedMonth, e.target.value, selectedStatus.toString())}
+            onChange={(e) => filterData(selectedMonth.toString(), e.target.value, selectedStatus.toString())}
             value={selectedYear}
           >
-            <option value="All">All Years</option>
+            <option value={0}>All Years</option>
             {uniqueYears.map((year, index) => (
               <option key={index} value={year}>
                 {year}
@@ -139,8 +181,9 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
         <Column>
           <label htmlFor="status">FILTER BY STATUS</label>
           <select
+            disabled={isLoad}
             id="status"
-            onChange={(e) => filterData(selectedMonth, selectedYear, e.target.value)}
+            onChange={(e) => filterData(selectedMonth.toString(), selectedYear.toString(), e.target.value)}
             value={selectedStatus}
           >
             <option value='7'>All Status</option>
