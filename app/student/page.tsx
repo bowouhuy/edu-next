@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { StudentList } from '@/types/global';
 import styled from 'styled-components';
 import Heading from '@/components/atoms/Heading';
@@ -10,9 +10,7 @@ import BasicSection from '@/components/atoms/BasicSection';
 import Container from '@/components/atoms/Container';
 import ClientMiddleware from '@/components/molecules/ClientMiddleware';
 import api from "../../utils/api";
-import NotesSection from '@/components/organisms/Dashboard/StudentList/FootNotes';
-
-
+// import NotesSection from '@/components/organisms/Dashboard/StudentList/FootNotes';
 
 const FootNotes = {
    title: "Footnotes",
@@ -32,17 +30,34 @@ const FootNotes = {
    ],
 }
 
+type UniqueEvent = {
+   id: number,
+   name: string,
+   description: string,
+   created_at: string,
+   updated_at: string,
+}
+
 const StudentsListPage: React.FC = () => {
 
    const [dataStudent, setSubmissionData] = React.useState<StudentList[]>([]);
-   const uniqueEvents = [...new Set(dataStudent.map(item => item.programCategory))];
-   const [selectedEvent, setSelectedEvent] = useState<string>('All');
+   // const uniqueEvents = [...new Set(dataStudent.map(item => item.programCategory))];
+   // events
+   const [selectedEvent, setSelectedEvent] = useState<number>(0);
    const [filteredData, setFilteredData] = useState([]);
    const [selectedMonth, setSelectedMonth] = useState<string>('All');
    const [selectedYear, setSelectedYear] = useState<string>('All');
    const [selectedStatus, setSelectedStatus] = useState<string>('All');
+   const [uniqueEvents, setUniqueEvents] = useState<UniqueEvent[]>();
 
-
+   useEffect(() => {
+      api.get<MainResponse<UniqueEvent[]>>('program-categories').then((res) => {
+         const data = res.data.data
+         setUniqueEvents(data)
+      }).catch((err) => {
+         console.error(err)
+      })
+   }, [])
    // useEffect(() => {
    //    const fetchSubmission = async () => {
    //       try {
@@ -77,10 +92,10 @@ const StudentsListPage: React.FC = () => {
                   <Heading>STUDENT LIST</Heading>
                   <Tabs id='incentive-tabs'>
                      <STabList>
-                        <Tab onClick={() => setSelectedEvent('All')}>All</Tab>
-                        {uniqueEvents.map(event => (
-                           <Tab key={event} onClick={() => setSelectedEvent(event)}>
-                              {event}
+                        <Tab onClick={() => setSelectedEvent(0)}>All</Tab>
+                        {uniqueEvents?.map((event, key) => (
+                           <Tab key={event.id} onClick={() => setSelectedEvent(event.id)}>
+                              {event.name}
                            </Tab>
                         ))}
                      </STabList>
@@ -90,16 +105,16 @@ const StudentsListPage: React.FC = () => {
                         <StudentListTable selectedEvent={selectedEvent} />
 
                      </STabPanel>
-                     {/* {uniqueEvents.map(event => (
-                        <STabPanel key={event}>
-                           <StudentListTable dataStudent={dataStudent.filter(item => item.programCategory === event)} />
+                     {uniqueEvents?.map((event,key) => (
+                        <STabPanel key={key}>
+                           <StudentListTable selectedEvent={selectedEvent}  />
                         </STabPanel>
-                     ))} */}
+                     ))}
                   </Tabs>
                </StudentListSection>
             </Container>
          </BasicSection>
-         <NotesSection data={FootNotes} />
+         {/* <NotesSection data={FootNotes} /> */}
       </ClientMiddleware>
    );
 };
