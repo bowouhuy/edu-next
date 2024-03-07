@@ -99,6 +99,10 @@ api.interceptors.response.use(
         window.location.href = "/auth/login";
         // alert("Token expired");
     }
+    if (error.response && error.response.status === 404){
+        window.location.href = "/404";
+
+    }
     return Promise.reject(error);
     }
 );
