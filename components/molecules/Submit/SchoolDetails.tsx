@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 import { Participant, SchoolDetail } from '@/types/referral';
-
+import RSelect from 'react-select/async'
 
 interface SchoolDetailsProps {
     // key : number;
@@ -21,10 +21,16 @@ type Item = {
     'name': string
 }
 
+type Option = {
+    'name': string,
+    'label': string,
+}
+
 const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew, onParticipantDelete, schoolDetails }) => {
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [selectedSchool, setSelectedSchool] = useState<string>('');
     const [cities, setCities] = useState<Item[]>([]);
+    const [optionCities, setOptionCities] = useState<Option[]>([])
     const [schools, setSchools] = useState<Item[]>([]);
     // const [participants, setParticipants] = useState<Participant[]>(schoolDetails[index].participants);
 
@@ -36,7 +42,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
     useEffect(() => {
         if (selectedCity) {
             api.get(`/schools/${selectedCity}`)
-                .then((response: { data: any }) => {
+                .then((response: { data: MainResponse<Item[]> }) => {
                     setSchools(response.data.data);
                 })
                 .catch((error: any) => console.error('Error fetching schools:', error));
@@ -63,35 +69,79 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
         onSchoolChange(index, value);
     }
 
+    const promiseSelect = (type: 'city' | 'school', inputValue: string) =>
+        new Promise<Option[]>((resolve) => {
+            setTimeout(() => {
+                resolve(filterSelect(type, inputValue));
+            }, 500);
+        });
+
+
+    const filterSelect = (type: 'city' | 'school', inputValue: string) => {
+        const arr = type === 'city' ? cities : schools
+        let newArr = arr.filter((i) =>
+            i.name.toLowerCase().includes(inputValue.toLowerCase())
+        ).map(v => ({ name: v.id, label: v.name }));
+        if (newArr.length > 50) {
+            newArr.length = 50
+        }
+        return newArr;
+    }
+
+
+
     return (
         <SchoolRow>
             <h4>School Details</h4>
             <span></span>
             <label htmlFor={'city-' + index}>City</label>
             {/* #TODO Tambah Delete School */}
-            <select
+            <RSelect
+                className="basic-single"
+                classNamePrefix="select"
+                isClearable={true}
+                defaultOptions
+                // defaultValue={{ label: 'Pilih Kota', name: '' }}
+                defaultInputValue=""
+                isSearchable={true}
+                name="color"
+                loadOptions={(inputValue: string) => promiseSelect('city', inputValue)}
+                onChange={(v) => onHandleCityChange(v?.name ?? '')}
+            />
+
+            {/* <select
                 id={'city-' + index}
                 name={'city' + index}
                 value={schoolDetails[index].city}
                 onChange={(e) => onHandleCityChange(e.target.value)}
             >
                 <option value="">Choose a City</option>
-                {cities && cities.map((city, index) => (
+                {cities && cities.splice(100, cities).map((city, index) => (
                     <option key={index} value={city.id}>
                         {city.name}
                     </option>
                 ))}
-            </select>
+            </select> */}
 
             <label htmlFor={'school-' + index}>School</label>
-            <select id={'school-' + index} name={'school' + index} value={schoolDetails[index].school} onChange={(e) => onHandleSchoolChange(e.target.value)}>
+            <RSelect
+                className="basic-single"
+                classNamePrefix="select"
+                isClearable={true}
+                defaultOptions
+                isSearchable={true}
+                name="color"
+                loadOptions={(inputValue: string) => promiseSelect('school', inputValue)}
+                onChange={(v) => onHandleSchoolChange(v?.name ?? '')}
+            />
+            {/* <select id={'school-' + index} name={'school' + index} value={schoolDetails[index].school} onChange={(e) => onHandleSchoolChange(e.target.value)}>
                 <option value="">Choose a School Name</option>
                 {schools && schools.map((school, index) => (
                     <option key={index} value={school.id}>
                         {school.name}
                     </option>
                 ))}
-            </select>
+            </select> */}
             <AddParticipant
                 onDelete={(indexParticipant) => onParticipantDelete(index, indexParticipant)}
                 onNew={(value) => onParticipantNew(index, value)}
