@@ -79,15 +79,27 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
 
     const filterSelect = (type: 'city' | 'school', inputValue: string) => {
         const arr = type === 'city' ? cities : schools
-        let newArr = arr.filter((i) =>
-            i.name.toLowerCase().includes(inputValue.toLowerCase())
-        ).map(v => ({ name: v.id, label: v.name }));
+        let clone = [...arr]
+        if (inputValue) {
+            clone = clone.filter((i) =>
+                i.name.toLowerCase().includes(inputValue.toLowerCase())
+            );
+        }
+        let newArr = clone.map(v => ({ name: v.id, label: v.name }))
         if (newArr.length > 50) {
             newArr.length = 50
         }
         return newArr;
     }
 
+    const defaultOptions = (type: 'city' | 'school') => {
+        let clone = type === 'city' ? [...cities] : [...schools]
+        if (clone.length > 50) {
+            clone.length = 50
+        }
+
+        return clone.map(v => ({ name: v.id, label: v.name }));
+    }
 
 
     return (
@@ -100,9 +112,9 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 className="basic-single"
                 classNamePrefix="select"
                 isClearable={true}
-                defaultOptions
+                defaultOptions={defaultOptions('city')}
                 // defaultValue={{ label: 'Pilih Kota', name: '' }}
-                defaultInputValue=""
+                // defaultInputValue=""
                 isSearchable={true}
                 name="color"
                 loadOptions={(inputValue: string) => promiseSelect('city', inputValue)}
@@ -128,7 +140,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 className="basic-single"
                 classNamePrefix="select"
                 isClearable={true}
-                defaultOptions
+                defaultOptions={defaultOptions('school')}
                 isSearchable={true}
                 name="color"
                 loadOptions={(inputValue: string) => promiseSelect('school', inputValue)}
