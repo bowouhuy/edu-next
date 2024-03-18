@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MyModal from '@/components/atoms/Modal';
 import CloseBtn from '@/components/atoms/CloseBtn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,18 +8,49 @@ import TitleColor from '@/components/atoms/TitleColor';
 import Paragraph from '@/components/atoms/Paragraph';
 import ArrowLong from '@/components/atoms/ArrowLong';
 import Image from 'next/image';
+import  { media } from '@/utils/media';
+import api from '@/utils/api';
 
 const WithdrawModal = () => {
 
     const [number, setNumber] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [withdrawAvailable, setWithdrawAvailable] = useState(true);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
+    const handleWithdraw = async () => {
+        try {
+            const response = await api.post('request-withdraw');
+            if (response) {
+                console.log('Withdraw request sent successfully');
+                openModal(); // Open modal after successful withdrawal request
+            } else {
+                console.error('Error fetching Withdraw request');
+            }
+        } catch (error) {
+            console.error('Error fetching withdraw request:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchWithdrawAvailability = async () => {
+            try {
+                const response = await api.get('affiliate');
+                setWithdrawAvailable(response.data.data.available_withdraw.status);
+                // console.log(response.data.data.available_withdraw.status);
+            } catch (error) {
+                console.error('Error fetching withdraw availability:', error);
+            }
+        };
+        
+        fetchWithdrawAvailability();
+    }, []);
+
     return (
         <div>
-            <TriggerModal className='cta-primary' href={'#'} onClick={openModal}>REQUEST WITHDRAW <ArrowLong/></TriggerModal>
+            <TriggerModal  className={withdrawAvailable ? 'cta-primary' : 'btn-withdraw-unavailable'} href={'#'} onClick={handleWithdraw}>REQUEST WITHDRAW <ArrowLong/></TriggerModal>
             <MyModal isOpen={isModalOpen} onClose={closeModal}>
                 <Column>
                     <Image src={'/images/IconPopup.svg'} alt={'Sure'} width={123} height={108} />
@@ -43,10 +74,28 @@ const TriggerModal = styled.a`
     gap: 10px;
     text-decoration: none;
     color: white;
+    font-weight: 700;
+    background: var(--primary);
+    padding: 20px;
+    display: flex;
+    font-size: 16px;
+    justify-content: center;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    ${media('<=phone')} {
+        font-size:14px;
+        padding: 10px;
+        border-radius:0;
+    }
     svg {
         path {
             fill: white;
         }
+    }
+    &.btn-withdraw-unavailable {
+        background: grey!important;
+        pointer-events: none!important;   
+        border: 1px solid grey!important;
     }
 `
 const ModalBtn = styled.button`
@@ -73,6 +122,11 @@ const ModalBtn = styled.button`
         transition: all 0.3s ease-in-out;
         border: 1px solid var(--primary);
         color: white;
+    }
+    &.btn-withdraw-unavailable {
+        background: grey;
+        pointer-events: none;   
+        border: 1px solid grey;
     }
 `
 const Column = styled.div`

@@ -1,120 +1,61 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HistoryTable from '@/components/organisms/Dashboard/BalanceHistory';
 import { Transaction } from '@/types/global';
 import styled from 'styled-components';
 import Tooltip from '@/components/atoms/Tooltip';
 import QuestionMark from '@/components/atoms/QuestionMark';
+import { media } from "@/utils/media";
+import ProfileLabel from '../../../components/atoms/ProfileLabel';
+import WithdrawModal from "@/components/molecules/Submit/WithdrawModal";
+import api from '@/utils/api';
+import formatPrice from "../../../utils/helper";
 
-const AvailableHistory = {
-    title: "Balance History",
-    balance: "Rp999.999.999.999,-",
+async function fetchData() {
+    try {
+        const response = await api.get(process.env.NEXT_PUBLIC_API_URL+'withdrawal-history');
+
+        return response.data; // Ini akan mengembalikan data dari API.
+    } catch (error) {
+        // Handle error jika terjadi kesalahan dalam permintaan.
+        console.error('Error fetching data:', error);
+        throw error;
+    }
 }
 
-const HistoryPage: React.FC = () => {
-    
-    const historyData: Transaction[] = [
-        {
-            date: '23 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '20 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '15 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '10 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '23 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '20 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '15 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '10 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '23 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '20 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '15 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '10 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '23 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '20 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-        {
-            date: '15 September 2023',
-            transactionType: 'Withdrawal',
-            amount: 'Rp200.000',
-            bankNumber: '123456789',
-        },
-        {
-            date: '10 September 2023',
-            transactionType: 'Dana Masuk',
-            amount: 'Rp50.000',
-            bankNumber: '987654321',
-        },
-    ];
+async function fetchDataBalance() {
+    try {
+        const response = await api.get(process.env.NEXT_PUBLIC_API_URL+'affiliate');
 
+        return response.data; // Ini akan mengembalikan data dari API.
+    } catch (error) {
+        // Handle error jika terjadi kesalahan dalam permintaan.
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+
+}
+export default function History() {
+    const [historyData, setHistoryData] = useState(null);
+    const [AvailableBalance, setAvailableBalance] = useState<number>(0);
+
+    useEffect(() => {
+        fetchData()
+            .then((data) => {
+                setHistoryData(data);
+            })
+            .catch((error) => {
+                // Handle error jika terjadi kesalahan dalam permintaan.
+            });
+        fetchDataBalance().then((data) => {
+            setAvailableBalance(data.data.available_withdraw.amount);
+        }).catch((error) => {
+
+        });
+    }, []);
     return (
         <>
-            <h1>{AvailableHistory.title}</h1>
+            <h1 className="d-none" style={{paddingBottom: '1rem'}}>Balance History</h1>
             <HistoryParent>
                 <Card>
                     <div>
@@ -122,17 +63,19 @@ const HistoryPage: React.FC = () => {
                             <Tooltip text={'Available ammount of incentives you can withdraw from your account'}><QuestionMark/>
                             </Tooltip>
                         </ProfileLabel>
-                        <TotalBalance>{AvailableHistory.balance}</TotalBalance>
+                        <TotalBalance>{formatPrice(AvailableBalance)}</TotalBalance>
                     </div>
-                    {/* <BtnArrowPrimary href={'#'} text={'REQUEST WITHDRAW'}/> */}
+                    <div>
+                        <WithdrawModal />
+                    </div>
                 </Card>
-                <HistoryTable historyData={historyData} />
+                {historyData && <HistoryTable historyData={historyData} />}
             </HistoryParent>
         </>
     );
-};
 
-export default HistoryPage;
+
+}
 
 const Card = styled.div`
     background: var(--primary);
@@ -141,25 +84,34 @@ const Card = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     span {
         color: white;
+    }
+    .btn-withdraw-unavailable {
+        background: transparent!important;
+        border: none!important;
+    }
+    ${media("<=tablet")} {
+        padding: 30px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    ${media("<=phone")} {
+        padding: 20px;
     }
 `
 const TotalBalance = styled.span`
     color: white;
     font-size: 40px;
+    ${media("<=phone")} {
+        font-size: 24px;
+    }
 `
 
 const HistoryParent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 30px;
+    
 `
-
-const ProfileLabel = styled.div`
-    display: flex;
-    flex-direction: row;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-`;

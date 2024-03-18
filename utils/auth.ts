@@ -42,6 +42,9 @@ const authClientMiddleware = () => {
   //check url
   const currentPath = window.location.pathname;
   if (_restrictedRoutes.includes(currentPath)) {
+    if (isAuthenticated()) {
+      window.location.href = "/dashboard/profile";
+    }
     return;
   }
   if (!isAuthenticated()) {

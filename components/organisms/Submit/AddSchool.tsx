@@ -120,10 +120,10 @@ export default AddSchool;
 
 const SchoolParent = styled.div`
     padding-left: 40px;
-    counter-reset: item-counter;
     background-image: repeating-linear-gradient(6deg, #000, #000 9px, transparent 10px, transparent 19px, #000 19px),repeating-linear-gradient(96deg, transparent, transparent 9px, transparent 9px, transparent 19px, transparent 19px),repeating-linear-gradient(186deg, transparent, transparent 7px, transparent 9px, transparent 19px, #333333 19px),repeating-linear-gradient(276deg, transparent, transparent 9px, transparent 9px, transparent 19px, #333333 19px);
     background-size: 1px 100%, 100% 1px, 1px 100% , 100% 1px;
     background-position: 0 0, 0 0, 100% 0, 0 100%;
     background-repeat: no-repeat;
-    margin-top: 40px;
+    margin-top: 40px;    
+    counter-reset: number-counter;
 `

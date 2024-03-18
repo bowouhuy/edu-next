@@ -5,6 +5,7 @@ import Paragraph from "@/components/atoms/Paragraph";
 import Image from "next/image";
 import Link from "next/link";
 import ArrowLong from "@/components/atoms/ArrowLong";
+import { media } from "@/utils/media";
 
 interface submitReferallItems{
     title: string;
@@ -34,7 +35,7 @@ export default function SubmitReferall(props: { data:any }){
 }
 
 
-const HeroBanner = styled.div`
+const HeroBanner = styled.section`
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -42,10 +43,24 @@ const HeroBanner = styled.div`
         width:100%;
         height:100%;
     }
+    ${media('<=phone')} {
+        flex-direction: column;
+        align-items: flex-start;
+        img {
+            height: auto;
+        }
+    }
 `
 
 const ImageRow = styled.div`
-    width: 70%
+    width: 70%;
+    ${media('<=tablet')} {
+        width: 60%;
+    }
+    ${media('<=phone')} {
+        width: 100%;
+    }
+    
 `
 const Detail = styled.div`
     width: 30%;
@@ -77,5 +92,16 @@ const Detail = styled.div`
         path {
             fill: white;
         }
+    }
+    ${media('<=tablet')} {
+        width: 60%;
+    }
+    ${media('<=phone')} {
+        width: -webkit-fill-available;
+        padding-top: 40px;
+        margin-top: -2rem;
+    }
+    ${media('<=smallPhone')} {
+        padding: 25px 20px;
     }
 `

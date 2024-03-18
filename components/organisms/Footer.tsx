@@ -2,9 +2,7 @@
 import styled, { css } from 'styled-components';
 // @ts-ignore
 import Container from "@/components/atoms/Container";
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import {inter} from '@/utils/font';
 
 export default function Footer() {
     // Get the current year
@@ -29,5 +27,8 @@ const FooterWrapper = styled.footer`
   color: #00000050;
   p {
     text-align: center;
+    font-size: 14px;
+    color: var( --navText);
+    font-family: '__Inter_469f07';
   }
 `;

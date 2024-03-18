@@ -1,13 +1,12 @@
 import { Participant } from '@/types/referral';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { media } from '@/utils/media';
 
 interface ParticipantFieldProps {
     index: number
     onChange: (index: number, value: Participant) => void;
     participant: Participant;
-    // partcipantName: string;
-    // phoneNumberName: string;
 }
 
 export default function ParticipantField({ index, onChange, participant }: ParticipantFieldProps) {
@@ -18,10 +17,6 @@ export default function ParticipantField({ index, onChange, participant }: Parti
     const partcipantName = `participant-name-${index}`;
     const phoneNumberName = `participant-number-${index}`;
 
-    // // }
-
-
-
     return (
         <ParticipantRow>
             <h4>PARTICIPANT DATA</h4>
@@ -31,7 +26,7 @@ export default function ParticipantField({ index, onChange, participant }: Parti
             </div>
             <div>
                 <label htmlFor={phoneNumberId}>Phone Number </label>
-                <input id={phoneNumberId} name={phoneNumberName} type='text' placeholder='Participant Phone Number' value={participant.phoneNumber} onChange={(e) => onChange(index, { fullName: participant.fullName, phoneNumber: e.target.value })} />
+                <input id={phoneNumberId} name={phoneNumberName} type='number' placeholder='Participant Phone Number' value={participant.phoneNumber} onChange={(e) => onChange(index, { fullName: participant.fullName, phoneNumber: e.target.value })} />
             </div>
         </ParticipantRow>
     )
@@ -45,23 +40,27 @@ const ParticipantRow = styled.div`
     gap: 10px;
     background-color: #F9F9F9;
     padding: 40px 30px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.20);
     position: relative;
     margin-top: 2px;
+    counter-increment: item-counter;
     h4 {
-        font-family: '__Poppins_baf6f6';
+        font-family: '__Poppins_ad20f7';
         text-transform: uppercase;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 28px;
         &::after {
-            counter-increment: item-counter;
             content: "#" counter(item-counter);
-            font-family: '__Poppins_baf6f6';
+            font-family: '__Poppins_ad20f7';
             font-weight: 700;
             font-size: 22px;
+        }
+        ${media('<=smallPhone')} {
+            font-size: 20px;
         }
     }
     div {
@@ -70,7 +69,7 @@ const ParticipantRow = styled.div`
         gap: 10px;
         input {
             text-transform: capitalize;
-            font-family: '__Poppins_baf6f6';
+            font-family: '__Poppins_ad20f7';
             padding: 20px 40px 20px 20px;
             &:placeholder {
                 text-transform: capitalize !important;

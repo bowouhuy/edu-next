@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 import { Participant, SchoolDetail } from '@/types/referral';
+import { media } from '@/utils/media';
 import RSelect from 'react-select/async'
 
 interface SchoolDetailsProps {
@@ -20,7 +21,6 @@ type Item = {
     'id': string
     'name': string
 }
-
 type Option = {
     'name': string,
     'label': string,
@@ -32,12 +32,6 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
     const [cities, setCities] = useState<Item[]>([]);
     const [optionCities, setOptionCities] = useState<Option[]>([])
     const [schools, setSchools] = useState<Item[]>([]);
-    // const [participants, setParticipants] = useState<Participant[]>(schoolDetails[index].participants);
-
-    // useEffect(() => {
-    //     setParticipants(schoolDetails[index].participants);
-    //     console.log('schoolDetails on Component SchoolDetails:', schoolDetails);
-    // }, [schoolDetails, index]);
 
     useEffect(() => {
         if (selectedCity) {
@@ -49,7 +43,6 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
         }
     }, [selectedCity]);
 
-
     useEffect(() => {
         api.get('/cities')
             .then((response: { data: any }) => {
@@ -58,7 +51,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             })
             .catch((error: any) => console.error('Error fetching cities:', error));
     }, []);
-
+    
     const onHandleCityChange = (value: string) => {
         setSelectedCity(value);
         onCityChange(index, value)
@@ -77,50 +70,36 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
         });
 
 
-    const filterSelect = (type: 'city' | 'school', inputValue: string) => {
-        const arr = type === 'city' ? cities : schools
-        let clone = [...arr]
-        if (inputValue) {
-            clone = clone.filter((i) =>
-                i.name.toLowerCase().includes(inputValue.toLowerCase())
-            );
+        const filterSelect = (type: 'city' | 'school', inputValue: string) => {
+            const arr = type === 'city' ? cities : schools
+            let clone = [...arr]
+            if (inputValue) {
+                clone = clone.filter((i) =>
+                    i.name.toLowerCase().includes(inputValue.toLowerCase())
+                );
+            }
+            let newArr = clone.map(v => ({ name: v.id, label: v.name }))
+            if (newArr.length > 50) {
+                newArr.length = 50
+            }
+            return newArr;
         }
-        let newArr = clone.map(v => ({ name: v.id, label: v.name }))
-        if (newArr.length > 50) {
-            newArr.length = 50
+    
+        const defaultOptions = (type: 'city' | 'school') => {
+            let clone = type === 'city' ? [...cities] : [...schools]
+            if (clone.length > 50) {
+                clone.length = 50
+            }
+    
+            return clone.map(v => ({ name: v.id, label: v.name }));
         }
-        return newArr;
-    }
-
-    const defaultOptions = (type: 'city' | 'school') => {
-        let clone = type === 'city' ? [...cities] : [...schools]
-        if (clone.length > 50) {
-            clone.length = 50
-        }
-
-        return clone.map(v => ({ name: v.id, label: v.name }));
-    }
-
+    
 
     return (
         <SchoolRow>
-            <h4>School Details</h4>
-            <span></span>
+            <h3>School Details</h3>
+                {/* <span></span> */}
             <label htmlFor={'city-' + index}>City</label>
-            {/* #TODO Tambah Delete School */}
-            <RSelect
-                className="basic-single"
-                classNamePrefix="select"
-                isClearable={true}
-                defaultOptions={defaultOptions('city')}
-                // defaultValue={{ label: 'Pilih Kota', name: '' }}
-                // defaultInputValue=""
-                isSearchable={true}
-                name="color"
-                loadOptions={(inputValue: string) => promiseSelect('city', inputValue)}
-                onChange={(v) => onHandleCityChange(v?.name ?? '')}
-            />
-
             {/* <select
                 id={'city-' + index}
                 name={'city' + index}
@@ -128,24 +107,27 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 onChange={(e) => onHandleCityChange(e.target.value)}
             >
                 <option value="">Choose a City</option>
-                {cities && cities.splice(100, cities).map((city, index) => (
+                {cities && cities.map((city, index) => (
                     <option key={index} value={city.id}>
                         {city.name}
                     </option>
                 ))}
             </select> */}
-
-            <label htmlFor={'school-' + index}>School</label>
             <RSelect
-                className="basic-single"
+                className="select"
                 classNamePrefix="select"
                 isClearable={true}
-                defaultOptions={defaultOptions('school')}
+                // defaultOptions={true}
+                // defaultValue={{ label: 'Pilih Kota', name: '' }}
+                defaultOptions={defaultOptions('city')}
+                defaultInputValue=""
                 isSearchable={true}
                 name="color"
-                loadOptions={(inputValue: string) => promiseSelect('school', inputValue)}
-                onChange={(v) => onHandleSchoolChange(v?.name ?? '')}
+                placeholder ="Choose a City"
+                loadOptions={(inputValue: string) => promiseSelect('city', inputValue)}
+                onChange={(v) => onHandleCityChange(v?.name ?? '')}
             />
+            <label htmlFor={'school-' + index}>School</label>
             {/* <select id={'school-' + index} name={'school' + index} value={schoolDetails[index].school} onChange={(e) => onHandleSchoolChange(e.target.value)}>
                 <option value="">Choose a School Name</option>
                 {schools && schools.map((school, index) => (
@@ -154,68 +136,121 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                     </option>
                 ))}
             </select> */}
-            <AddParticipant
-                onDelete={(indexParticipant) => onParticipantDelete(index, indexParticipant)}
-                onNew={(value) => onParticipantNew(index, value)}
-                participants={schoolDetails[index].participants}
-                onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />
+            <RSelect
+                className="select"
+                classNamePrefix="select"
+                isClearable={true}
+                defaultOptions={defaultOptions('school')}
+                isSearchable={true}
+                name="color"
+                placeholder ="Choose a School Name"
+                loadOptions={(inputValue: string) => promiseSelect('school', inputValue)}
+                onChange={(v) => onHandleSchoolChange(v?.name ?? '')}
+            />
+            <Participant>
+                <AddParticipant
+                    onDelete={(indexParticipant) => onParticipantDelete(index, indexParticipant)}
+                    onNew={(value) => onParticipantNew(index, value)}
+                    participants={schoolDetails[index].participants}
+                    onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />
+            </Participant>  
         </SchoolRow>
     );
 };
 
 export default SchoolDetails;
 
-
-
 const SchoolRow = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: #F9F9F9;
-    padding: 40px 30px;
-    margin-bottom: 40px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.20);
+    counter-reset: item-counter;
+    padding: 2rem 0;
     position: relative;
     margin-top: 2px;
-    h4 {
-        font-family: '__Poppins_baf6f6';
+    // counter-increment: number-counter;
+    h3 {
+        font-family: '__Poppins_ad20f7';
         text-transform: uppercase;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 28px;
         &::after {
-            counter-increment: item-counter;
-            content: "#" counter(item-counter);
-            font-family: '__Poppins_baf6f6';
+            content: "#" counter(number-counter);
+            font-family: '__Poppins_ad20f7';
             font-weight: 700;
             font-size: 22px;
+        }
+        ${media('<=smallPhone')} {
+            font-size: 20px;
         }
     }
     div {
         display: flex;
-        flex-direction: column;
+        // flex-direction: column;
         gap: 10px;
         input {
             text-transform: capitalize;
-            font-family: '__Poppins_baf6f6';
+            font-family: '__Poppins_ad20f7';
             padding: 20px 40px 20px 20px;
             &:placeholder {
                 text-transform: capitalize !important;
             }
         }
     }
-    &:before {
-        content: '';
-        width: 30px;
-        height: 30px;
-        background: var(--primary);
-        border-radius: 100px;
-        position: absolute;
-        left: 0;
-        margin-left: -56px;
-        top: calc(50% - 15px);
+    .css-t3ipsp-control:hover {
+        outline: var(--primary) auto 1px!important;
+        border-color: var(--primary) !important;
     }
-    
+    .select__control, .select__value-container, .select__input-container {
+        flex-direction: row;
+        padding-left: 0;
+    }
+    .select__control {
+        width: -webkit-fill-available;
+        font-family: '__Poppins_ad20f7'!important;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.20);
+        font-size: 18px;
+        color: rgba(24, 24, 24, 0.50);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, black 50%), linear-gradient(135deg, black 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
+        background-position: calc(100% - 20px) calc(1.6em + 2px), calc(100% - 15px) calc(1.6em + 2px), 100% 0;
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+    }
+    .select__indicator-separator,.select__indicator {
+        display: none;
+    }
+    .select__menu {
+        background: white;
+        div {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            font-family: '__Poppins_ad20f7'!important;
+            background: white;
+            color: black;
+            gap: 0; 
+            &:hover {
+                background: #f2f2f2;
+            }
+        }
+    }
+    .select__value-container {
+        position: relative;
+        height: 38px;
+    }
+    .select__input-container {
+        position: absolute;
+    }
 `
 
+const Participant = styled.div`
+    div {
+        width: -webkit-fill-available;
+    }
+`

@@ -3,6 +3,7 @@ import FlexRow from "@/components/atoms/FlexRow";
 import TitleColor from "@/components/atoms/TitleColor";
 import Image from "next/image";
 import styled from "styled-components";
+import { media } from "@/utils/media";
 
 export default function CtaLearnMore () {
     return (
@@ -34,6 +35,10 @@ const CtaClaim = styled.div`
         a {
             margin: 0;
         }
+    }
+    ${media("<=tablet")} {
+        justify-content: center;
+        gap: 2rem;
     }
 `
 

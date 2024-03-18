@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { StudentList } from '@/types/global';
 import styled from 'styled-components';
 import Heading from '@/components/atoms/Heading';
@@ -10,7 +10,9 @@ import BasicSection from '@/components/atoms/BasicSection';
 import Container from '@/components/atoms/Container';
 import ClientMiddleware from '@/components/molecules/ClientMiddleware';
 import api from "../../utils/api";
-// import NotesSection from '@/components/organisms/Dashboard/StudentList/FootNotes';
+import NotesSection from '@/components/organisms/Dashboard/StudentList/FootNotes';
+
+
 
 const FootNotes = {
    title: "Footnotes",
@@ -39,7 +41,6 @@ type UniqueEvent = {
 }
 
 const StudentsListPage: React.FC = () => {
-
    const [dataStudent, setSubmissionData] = React.useState<StudentList[]>([]);
    // const uniqueEvents = [...new Set(dataStudent.map(item => item.programCategory))];
    // events
@@ -58,32 +59,8 @@ const StudentsListPage: React.FC = () => {
          console.error(err)
       })
    }, [])
-   // useEffect(() => {
-   //    const fetchSubmission = async () => {
-   //       try {
-   //          const response = await api.get(process.env.NEXT_PUBLIC_API_URL+'submissions');
-   //          if (response) {
-   //             const data = await response.data.data;
-   //             setSubmissionData(data);
-   //          } else {
-   //             console.error('Error fetching referral types');
-   //          }
-   //          // const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}submissions?month=${selectedMonth}&year=${selectedYear}&status=${selectedStatus}`;
 
-   //          //    // Call the API endpoint
-   //          //    const response = await api.get(apiUrl);
-   //          //    console.log(response.data.data);
-
-   //          //    // Update state with filtered data from the response
-   //          //    setFilteredData(response.data.data);
-   //       } catch (error) {
-   //          console.error('Error fetching referral types', error);
-   //       }
-   //    };
-
-   //    fetchSubmission();
-   // }, []);
-
+   
    return (
       <ClientMiddleware>
          <BasicSection className='first-child'>
@@ -100,10 +77,7 @@ const StudentsListPage: React.FC = () => {
                         ))}
                      </STabList>
                      <STabPanel>
-                        {/* Display all dataStudent when All tab is selected */}
-                        {/* <StudentListTable dataStudent={selectedEvent === 'All' ? dataStudent : dataStudent.filter(item => item.programCategory === selectedEvent)} /> */}
                         <StudentListTable selectedEvent={selectedEvent} />
-
                      </STabPanel>
                      {uniqueEvents?.map((event,key) => (
                         <STabPanel key={key}>
@@ -114,7 +88,7 @@ const StudentsListPage: React.FC = () => {
                </StudentListSection>
             </Container>
          </BasicSection>
-         {/* <NotesSection data={FootNotes} /> */}
+         <NotesSection data={FootNotes} />
       </ClientMiddleware>
    );
 };

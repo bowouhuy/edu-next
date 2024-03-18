@@ -31,7 +31,7 @@ const Anchor = styled.a<ButtonProps>`
   border: 1px solid var(--primary);
   text-decoration: none;
   text-align: center;
-  padding: 30px;         
+  padding: 20px 30px;         
   background: white;
   border-radius: 10px;
   font-size: 18px;

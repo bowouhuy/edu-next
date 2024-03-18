@@ -3,19 +3,20 @@ import styled, { css } from 'styled-components';
 import Image from "next/image";
 import Globe from '../../../public/Images/Globe.png'
 import { media } from "@/utils/media";
+import WhiteGlobe from '@/public/Images/whiteglobe.png'
 
 type TextLinkVisit = { text: string; };
 
 const textVisitWebsite: TextLinkVisit = {
     text: 'Visit Our Website',
-  };
+};
 
-  
 export default function visitWebsite (){
     return (
-        <VisitWebsite>
+        <VisitWebsite className="visit-website">
             <Link href="https://www.myeducationrepublic.com" target="blank">
-                <Image src={Globe} width={17} height={17} alt="globe"/>
+                <Image className="globeDekstop" src={Globe} width={17} height={17} alt="globe"/>
+                <Image className="globeMobile" src={WhiteGlobe} width={17} height={17} alt="globe"/>
                 <span>{textVisitWebsite.text}</span>
             </Link>
         </VisitWebsite>
@@ -36,19 +37,16 @@ const VisitWebsite = styled.div`
         line-height: normal;
         text-decoration: none;
         text-transform: uppercase;
-
-        &:hover {
-        &::after {
-            content: "";
-            height: 3px;
-            width: 100%;
-            bottom: -7px;
-            left: 0;
-            position: absolute;
-            background-color: #ff6d00;
+        .globeMobile {
+            display:none;
         }
-    }
-    ${media('<tablet')} {
-        display: none;
+        ${media('<desktop')} {
+            margin: 0;
+            // .globeDekstop {
+            //     display: none;
+            // }
+        }
+        &:hover {
+            color: var(--primary);
     }
 `;

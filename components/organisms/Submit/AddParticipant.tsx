@@ -4,7 +4,8 @@ import PlusMinus from '@/components/atoms/PlusMinus';
 import ParticipantField from '@/components/molecules/Submit/Participant';
 import AddMore from '@/components/atoms/AddMore';
 import { Participant } from '@/types/referral';
-// import Button from '@/components/atoms/Button';
+import RemoveRow from '@/components/atoms/RemoveRow';
+import TrashIcon from '@/components/atoms/TrashIcon';
 
 interface AddParticipantProps {
     participants: Participant[];
@@ -14,8 +15,6 @@ interface AddParticipantProps {
 }
 
 const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, participants, onDelete }) => {
-    // const [participants, setParticipants] = useState<JSX.Element[]>([]);
-    // const [participantCount, setParticipantCount] = useState(0);
 
     const handleChange = (indexParticipant: number, value: Participant) => {
         console.log('indexParticipant:', indexParticipant);
@@ -25,21 +24,6 @@ const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, partic
             onNew(value);
         }
     }
-    // Function to add the initial ParticipantField
-    // const addInitialParticipant = () => {
-    // setParticipants([
-    //     <ParticipantField
-    //         key={0}
-    //         index={0}
-    //         onChange={handleChange}
-    //     />,
-    // ]);
-    // setParticipantCount(0);
-    // };
-
-    // useEffect(() => {
-    //     addInitialParticipant();
-    // }, []);
 
     const addParticipantRow = () => {
         // const newCount = participantCount + 1;
@@ -47,35 +31,26 @@ const AddParticipant: React.FC<AddParticipantProps> = ({ onChange, onNew, partic
             fullName: '',
             phoneNumber: '',
         });
-        // setParticipants((prevParticipants) => [
-        //     ...prevParticipants,
-        //     <ParticipantField
-        //         key={newCount}
-        //         index={newCount}
-        //         onChange={handleChange}
-        //     />,
-        // ]);
-        // setParticipantCount(newCount);
     };
-
 
     return (
         <>
             <ParticipantParent>
                 {participants.map((participant, index) => (
                     <Fragment key={index}>
-                        <button onClick={() => onDelete(index)}>Hapus</button>
-                        <div>
-                            <ParticipantField
-                                participant={participant}
-                                key={index}
-                                index={index}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        <ParticipantRow className='participant'>    
+                            <RemoveRow className="delete" type="button" onClick={() => onDelete(index)}><TrashIcon /></RemoveRow>
+                            <div className='wrapper'>
+                                <ParticipantField
+                                    participant={participant}
+                                    key={index}
+                                    index={index}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </ParticipantRow>   
                     </Fragment>
                 ))}
-
                 <AddMore type="button" onClick={addParticipantRow}>
                     <PlusMinus /> ADD MORE PARTICIPANT
                 </AddMore>
@@ -95,4 +70,19 @@ const ParticipantParent = styled.div`
     background-position: 0 0, 0 0, 100% 0, 0 100%;
     background-repeat: no-repeat;
     margin-top: 40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .delete {
+        margin-top: 0;
+    }
+`
+const ParticipantRow = styled.div`
+    position: relative;
+    &:nth-child(1) {
+        .delete {
+            visibility: hidden;
+        }
+    }
 `

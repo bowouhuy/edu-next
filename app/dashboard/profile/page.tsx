@@ -31,6 +31,18 @@ async function fetchData() {
     }
 }
 
+async function fetchDataAffiliate() {
+    try {
+        const response = await api.get(process.env.NEXT_PUBLIC_API_URL+'affiliate');
+
+        return response.data; // Ini akan mengembalikan data dari API.
+    } catch (error) {
+        // Handle error jika terjadi kesalahan dalam permintaan.
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+
 
 const AffeliateInfo = {
     title: "Affiliates",
@@ -43,15 +55,21 @@ const AffeliateInfo = {
 }
 
 export default function Profile() {
-    const [profileData, setProfileData] = useState(null); // State untuk menyimpan data dari API
+    const [profileData, setProfileData] = useState(null);
+    const [affiliateData, setAffiliateData] = useState(null);
 
     useEffect(() => {
-    fetchData() // Panggil fungsi fetchData untuk mengambil data dari API
-        .then((data) => {
-        setProfileData(data); // Simpan data ke dalam state
-        })
-        .catch((error) => {
-        // Handle error jika terjadi kesalahan dalam permintaan.
+        fetchData()
+            .then((data) => {
+            setProfileData(data);
+            })
+            .catch((error) => {
+            // Handle error jika terjadi kesalahan dalam permintaan.
+            });
+        fetchDataAffiliate().then((data) => {
+            setAffiliateData(data);
+        }).catch((error) => {
+            // Handle error jika terjadi kesalahan dalam permintaan.
         });
     }, []);
 
@@ -60,7 +78,7 @@ export default function Profile() {
         <>  
             {/* <DashProfile data={ProfileInfo}/>    */}
             {profileData && <DashProfile data={profileData} />}  
-            <AffiliateProfileInfo data={AffeliateInfo}  />
+            {affiliateData && <AffiliateProfileInfo data={affiliateData} />}
         </>
     )
 }

@@ -7,7 +7,7 @@ type CTAProps = PropsWithChildren<{
     color: string;
 }>;
 
-export default function Button({
+export default function CtaPrimary({
     href,
     children,
     color,

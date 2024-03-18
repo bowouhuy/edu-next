@@ -6,32 +6,29 @@ import Tooltip from "@/components/atoms/Tooltip";
 import React, { Key } from "react";
 import styled from "styled-components";
 import { media } from "@/utils/media";
+import ProfileLabel from "@/components/atoms/ProfileLabel";
+import WithdrawModal from "@/components/molecules/Submit/WithdrawModal";
 
-
-// Define the type for the affiliate data
-interface AffiliateData {
-    title: string;
-    suc_referral: string;
-    reg_referral: string;
-    // Add other properties here
+function formatPrice(price: number) {
+    return "Rp. "+price.toLocaleString('id-ID');
 }
 
 export default function AffiliateProfileInfo(props: { data:any }){
     return (
         <>
-            <h5>{props.data.title}</h5>
+            <h5>Affiliates</h5>
             <ProfileLayout>
                 <ProfileList>
                     <ProfileRow>
                         <ParentInfo>
                             <ProfileLabel>Successful referral</ProfileLabel> 
-                            <span className="large-text">{props.data.suc_referral}</span>
+                            <span className="large-text">{props.data.data.submissions.paid}</span>
                         </ParentInfo> 
                     </ProfileRow>
                     <ProfileRow>
                         <ParentInfo>
                             <ProfileLabel>Registered referral</ProfileLabel> 
-                            <span className="large-text">{props.data.reg_referral}</span>
+                            <span className="large-text">{props.data.data.submissions.total}</span>
                         </ParentInfo> 
                     </ProfileRow>
                 </ProfileList>
@@ -40,7 +37,7 @@ export default function AffiliateProfileInfo(props: { data:any }){
                         <ParentInfo>
                             <ProfileLabel>Balance
                                 <Tooltip text={"Available ammount of incentives you can withdraw from your account"}><QuestionMark/></Tooltip></ProfileLabel>
-                            {props.data.suc_referral}
+                            <span>{formatPrice(props.data.data.available_withdraw.amount)}</span>
                         </ParentInfo>
                     </ProfileRow>
                     <ProfileRow>
@@ -48,63 +45,63 @@ export default function AffiliateProfileInfo(props: { data:any }){
                             <ProfileLabel>Pending incentive
                             <Tooltip text={"Available ammount of incentives you can withdraw from your account"}><QuestionMark/></Tooltip>
                             </ProfileLabel>
-                            {props.data.pend_balance}
+                            <span>{formatPrice(props.data.data.potential_commission)}</span>
                         </ParentInfo>
                     </ProfileRow>
                 </ProfileList>
-                <ProfileList>
+                <ProfileList className="profile-row__last">
                     <ProfileRow>
                         <ParentInfo>
                             <ProfileLabel>Withdrawal on process
                             <Tooltip text={"Available ammount of incentives you can withdraw from your account"}><QuestionMark/></Tooltip></ProfileLabel> 
-                            {props.data.on_withdraw}
+                            <span>{formatPrice(props.data.data.pending_withdrawal)}</span>
                         </ParentInfo>
                     </ProfileRow>
                     <ProfileRow>
                         <ParentInfo>
                             <ProfileLabel>total withdrawn
                             <Tooltip text={"Available ammount of incentives you can withdraw from your account"}><QuestionMark/></Tooltip></ProfileLabel> 
-                            {props.data.total_withdraw}
+                            <span>{formatPrice(props.data.data.total_withdrawn)}</span>
                         </ParentInfo>
                     </ProfileRow>
                 </ProfileList>                   
             </ProfileLayout>
+            <WithdrawModal />
         </>
     );
 }
 
 const ParentInfo = styled.div`
-  color: var(--text);
-  font-size: 16px;
-  line-height: 1.3;
-  margin-bottom: 0px;
-  padding: 30px;
-  ${media("<=smallPhone")} {
-    font-size: 14px;
-    .large-text {
-        font-size: 30px;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.3;
+    margin-bottom: 0px;
+    padding: 30px;
+    span {
+        font-size: 20px;
     }
-  } 
+    .large-text {
+        font-size: 40px;
+    }
+    ${media("<=smallPhone")} {
+        font-size: 14px;
+        .large-text {
+            font-size: 30px;
+        }
+        padding: 20px;
+        span {
+            font-size: 16px;
+        }
+    } 
 `;
 
 const ProfileLayout = styled.div`
-    // padding: 20px;
-    margin-bottom: 30px;
-
     p {
         display: flex;
         flex-direction: column;
     }
-`;
-
-
-const ProfileLabel = styled.div`
-    display: flex;
-    flex-direction: row;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    ${media("<=phone")} {
-        font-size: 12px;
+    .profile-row__last {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 `;

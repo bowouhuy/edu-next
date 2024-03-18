@@ -1,36 +1,17 @@
 'use client'
-import React from "react";
-import DashProfile from "@/components/organisms/Dashboard/DashProfile";
-import BasicSection from "@/components/atoms/BasicSection";
-import Container from "@/components/atoms/Container";
-import SideBarLayout from "@/components/molecules/SideBarMenu";
-import ContainerSideBar from "@/components/atoms/ContainerSideBar";
-import styled from "styled-components";
-import AffiliateProfileInfo from "@/components/organisms/Dashboard/Affiliate/AffiliateProfileInfo";
+import React, { useEffect } from "react";
+import { Router } from "next/router";
 
+const HomePage = () => {
 
-const myProfile = () => {
-  // const defaultParams = { slug: [] };
-    return (
-        <BasicSection>
-          {/* <Container>
-            <ContainerSideBar>
-              <SideBarLayout/>
-              <MainContent>
-                {/* <DashProfile data={ProfileInfo}/>   
-                <AffiliateProfileInfo data={AffeliateInfo}  /> */}
-              {/* </MainContent> */}
-            {/* </ContainerSideBar> */}
-          {/* </Container> */} 
-        </BasicSection>
-    )
-}
+  // useEffect(() => {
+  //   // Perform navigation when the component mounts
+  //   Router.push('/auth/login'); 
+  // }, []);
+  return null;
+};
 
+export default HomePage;
 
-const MainContent = styled.div`
-  width: 80%;
-`
-
-export default myProfile;
 
 

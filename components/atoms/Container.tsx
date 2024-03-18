@@ -3,28 +3,17 @@ import { media } from "../../utils/media";
 
 const Container = styled.div`
   width: 100%;
+  max-width: 1320px;
   height: 100%;
   margin: 0 auto;
   padding: 0 1rem;
 
-  ${media(">=largeDesktop")} {
-    max-width: 1320px;
+  @media (max-width: 1320px) {
+    padding: 0 2rem;
+    width: -webkit-fill-available;
   }
-
-  ${media("<=desktop", "<largeDesktop")} {
-    max-width: 1280px;
-  }
-  
-  ${media(">=tablet", "<desktop")} {
-    max-width: 960px;
-  }
-
-  ${media(">=phone", "<tablet")} {
-    max-width: 700px;
-  }
-
-  ${media(">=smallPhone", "<phone")} {
-    max-width: 540px;
+  ${media("<=phone")} {
+    padding: 0 1.5rem;
   }
 `;
 

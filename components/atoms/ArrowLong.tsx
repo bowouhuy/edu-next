@@ -8,7 +8,7 @@ const ArrowRight = styled.svg`
   display: flex;
   transition: transform 0.6s ease-in-out;
   text-decoration: none;
-  width: 58px;
+  width: 30px;
   &:hover {
     svg {
       transform: translateX(8px);    

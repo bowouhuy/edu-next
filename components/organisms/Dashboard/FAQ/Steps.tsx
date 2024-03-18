@@ -3,6 +3,7 @@ import React, { Key } from "react";
 import styled from "styled-components";
 import Paragraph from "@/components/atoms/Paragraph";
 import Image from "next/image";
+import { media } from "@/utils/media";
 
 interface stepsItems {
     icon: string;
@@ -13,7 +14,7 @@ interface stepsItems {
 export default function StepClaim(props: { data:any }){
     return (
         <>
-            <Heading>
+            <Heading className="d-none">
                 {props.data.title}
             </Heading>  
             <div>
@@ -45,12 +46,16 @@ const StepImage = styled.div`
 `
 
 const StepItems = styled.div`
-    cursor: pointer;
+    pointer-events: none!important;
     margin-bottom: 30px;
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 20px;
+    ${media("<=smallPhone")} {
+        flex-direction: column;
+        align-items: flex-start;
+    }
     img {
         object-fit: contain;
         width: 65px;
@@ -59,6 +64,9 @@ const StepItems = styled.div`
     h4 {
         font-size: 25px;
         margin-bottom: 0;
+        ${media("<=smallPhone")} {
+            font-size: 20px;
+        }
     }
     p {
         margin-top: 0;

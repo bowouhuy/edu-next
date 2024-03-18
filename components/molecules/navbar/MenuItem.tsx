@@ -7,17 +7,18 @@ import NavItemWrapper from "@/components/atoms/NavItemWrap";
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image"
-
+import { media } from "@/utils/media";
 
 interface MenuItemProps {
     item: MenuItemType;
     depth: number;
-    isInitiallyOpen: boolean; // Add a prop to determine if it's initially open
+    isInitiallyOpen: boolean;
+    handleCloseNav: () => void;
 }
 
-function MenuItem({ item, depth, isInitiallyOpen }: MenuItemProps) {
-    
-    const pathname = usePathname()  
+function MenuItem({ item, depth, isInitiallyOpen, handleCloseNav }: MenuItemProps) {
+
+    const pathname = usePathname()
     const [isMenuOpen, setIsMenuOpen] = useState(isInitiallyOpen);
 
     useEffect(() => {
@@ -35,7 +36,7 @@ function MenuItem({ item, depth, isInitiallyOpen }: MenuItemProps) {
     // Function to check if the item or its submenu items are active
     const isItemActive = (item: MenuItemType | undefined): boolean => {
         if (!item) {
-        return false;
+            return false;
         }
         return pathname === item.href || (item.submenu && item.submenu.some(subitem => isItemActive(subitem))) as boolean;
     };
@@ -45,18 +46,18 @@ function MenuItem({ item, depth, isInitiallyOpen }: MenuItemProps) {
             className={` ${isMenuOpen ? "hasSubmenu" : ""}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            >
+        >
             <MenuBtn  className={`link ${isItemActive(item) ? 'active' : ''}`}>
-                <Link href={item.href}>
+                <Link href={item.href} onClick={handleCloseNav}>
                     {item.title}
                 </Link>
                 {depth > 1 ? <NavArrow /> : <NavArrow />}
             </MenuBtn>
-            {isMenuOpen && <SubMenuDropdown submenu={item.submenu} depth={depth} />}
+            {isMenuOpen && <SubMenuDropdown submenu={item.submenu} depth={depth} handleCloseNav={handleCloseNav} /> }
         </NavItemWrapper>
-        ) : (
+    ) : (
         <NavItemWrapper className={`link ${pathname === item.href ? 'active' : ''}`}>
-            <Link href={item.href} >
+            <Link href={item.href} onClick={handleCloseNav}>
                 {item.icon && ( <Image src={item.icon} alt="" width={20} height={18} /> )}
                 {item.title}
             </Link>
@@ -78,8 +79,13 @@ const MenuBtn = styled.button`
         text-decoration: none;
         font-weight: 400;
         margin: 0 .4rem;    
-        font-size: 16px;
+        font-size: 14px;
+        letter-spacing: .1rem;
         text-transform: uppercase;
+        ${media('<desktop')} {
+            color: white;
+            margin: 0;
+        }
     }
 `;
 

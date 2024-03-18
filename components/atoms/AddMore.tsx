@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { media } from "@/utils/media";
 
 const AddMore = styled.button`
     padding: 0!important;
@@ -11,12 +12,15 @@ const AddMore = styled.button`
     svg {
         width: 10px;
         height: 10px;
-        padding: 5px;
+        padding: 5px;   
         border-radius: 100px;
         background: var(--primary);
         path {
             fill: white;
         }
+    }
+    ${media('<=smallPhone')} {
+        font-size: 14px!important;
     }
 `
 

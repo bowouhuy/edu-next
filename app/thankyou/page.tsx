@@ -28,11 +28,9 @@ export default function thankyouPage(){
         <ClientMiddleware>
             <BasicSection className="first-child">
                 <Container>
-                    <ThankyouSection data={thankyou}/>
+                    <ThankyouSection/>
                 </Container>
             </BasicSection>
         </ClientMiddleware>
     )
 }
-
-

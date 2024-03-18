@@ -5,14 +5,15 @@ import Form from "./Form";
 import testimg from "@/public/test.png"
 import TitleColor from "@/components/atoms/TitleColor";
 import FlexRow from "@/components/atoms/FlexRow";
+import { media } from "@/utils/media";
 
 
 export default function BannerLogin(props:{ data: any }){
     return (
         <>
-            <FlexRow>
+            <FlexRow className="login-wrapper">
                 <LeftRow>
-                    <TitleColor fontSize={40} style={{width: 570}}>{props.data.title}</TitleColor>
+                    <TitleColor className="login-heading" fontSize={40}>{props.data.title}</TitleColor>
                     <Paragraph fontSize={18}>
                         {props.data.short_desc}
                     </Paragraph>
@@ -30,6 +31,17 @@ const LeftRow = styled.div`
     width: 60%;
     display: flex;
     flex-direction: column;
+    .login-heading {
+        max-width: 570px;
+    }
+    ${media('<=tablet')} {
+        width: 100%;
+    }
+    ${media('<=phone')} {
+        .login-heading {
+            font-size: 30px;
+        }
+    }
 `
 
 const RightRow = styled.div`
@@ -38,5 +50,8 @@ const RightRow = styled.div`
     img {
         width: 100%;
         height: auto;
+    }
+    ${media('<=tablet')} {
+        width: 100%;
     }
 `

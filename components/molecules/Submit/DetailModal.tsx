@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MyModal from '@/components/atoms/Modal';
 import CloseBtn from '@/components/atoms/CloseBtn';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,15 +8,44 @@ import TitleColor from '@/components/atoms/TitleColor';
 import Paragraph from '@/components/atoms/Paragraph';
 import ArrowLong from '@/components/atoms/ArrowLong';
 import Image from 'next/image';
+import api from '@/utils/api';
 
 const DetailModal = () => {
 
     const [number, setNumber] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [withdrawAvailable, setWithdrawAvailable] = useState(true);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+    
+    const handleWithdraw = async () => {
+        try {
+            const response = await api.post(process.env.NEXT_PUBLIC_API_URL + 'request-withdraw');
+            if (response) {
+                console.log('Withdraw request sent successfully');
+            } else {
+                console.error('Error fetching Withdraw request');
+            }
+        } catch (error) {
+            console.error('Error fetching withdraw request:', error);
+        }
+    };
 
+    useEffect(() => {
+        const fetchWithdrawAvailability = async () => {
+            try {
+                const response = await api.get(process.env.NEXT_PUBLIC_API_URL + 'affiliate');
+                setWithdrawAvailable(response.data.available_withdraw);
+            } catch (error) {
+                console.error('Error fetching withdraw availability:', error);
+            }
+        };
+        
+        fetchWithdrawAvailability();
+    }, []);
+
+    
     return (
         <div>
             <TriggerModal className='cta-primary' href={'#'} onClick={openModal}>See more details <ArrowLong/></TriggerModal>
@@ -29,7 +58,7 @@ const DetailModal = () => {
                         <CloseBtn onClick={closeModal}><FontAwesomeIcon icon={faXmark} /></CloseBtn>
                     </div>
                 <div className="flex-row">
-                    <ModalBtn onClick={closeModal}>YES, WITHDRAW</ModalBtn>
+                    <ModalBtn className={withdrawAvailable ? 'btn-withdraw' : 'btn-withdraw-unavailable'}  onClick={handleWithdraw}>YES, WITHDRAW</ModalBtn>
                     <ModalBtn onClick={closeModal}>NO, CANCEL IT</ModalBtn>
                 </div>
                 </Column>
@@ -80,6 +109,11 @@ const ModalBtn = styled.button`
             color: var(--primary);
             border: 1px solid var(--primary);
         }
+    }
+    &.btn-withdraw-unavailable {
+        background: grey;
+        pointer-events: none;   
+        border: 1px solid grey;
     }
 `
 const Column = styled.div`

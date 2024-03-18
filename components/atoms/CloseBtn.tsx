@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { media } from "@/utils/media"; 
 
 const CloseBtn = styled.button`
     background: transparent;
@@ -15,6 +16,10 @@ const CloseBtn = styled.button`
             fill: #00000090;
         }
     }
+    ${media('<=smallPhone')} {
+        right:5rem;
+    }
+
 `
 
 

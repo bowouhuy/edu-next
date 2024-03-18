@@ -85,11 +85,34 @@ const SideBarMenu = styled.div`
 
 const MobileDropdown = styled.div`
     select {
+        padding: 20px 40px 20px 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.20);
+        font-size: 18px;
+        font-family: inherit;
+        color: rgba(0, 0, 0, 0.60);
+        -webkit-appearance: none;
+        display: block;
         width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        -moz-appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, black 50%), linear-gradient(135deg, black 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
+        background-position: calc(100% - 20px) calc(1.6em + 2px), calc(100% - 15px) calc(1.6em + 2px),100% 0;
+        background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+        background-repeat: no-repeat;
+        box-shadow: 0 10px 15px 0 #00000010;
+        &:focus-visible  {
+            
+            outline: var(--primary) auto 1px;
+        }
+        ${media("<=smallPhone")} {
+            font-size: 14px;
+            padding: 15px 40px 15px 15px;
+            option {
+                padding: 1rem;
+                font-size: 16px;
+            }
+        }
+
     }
 `;
 

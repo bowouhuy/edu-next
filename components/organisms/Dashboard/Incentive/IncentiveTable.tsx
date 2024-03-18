@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Incentive } from '@/types/global';
 import styled from 'styled-components';
 import IncentivePagination from '@/components/molecules/Dashboard/IncentivePagination';
+import { media } from '@/utils/media';
+import formatPrice from '@/utils/helper';
+import { format } from 'util';
 
 interface IncentiveTableProps {
     dataIncentive: Incentive[];
+    selectedEvent: string; // Add selectedEvent prop
 }
 
-const IncentiveTable: React.FC<IncentiveTableProps> = ({ dataIncentive }) => {
+const IncentiveTable: React.FC<IncentiveTableProps> = ({ dataIncentive, selectedEvent }) => {
     const itemsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCountry, setSelectedCountry] = useState('All'); // Initialize with 'All'
@@ -41,7 +45,7 @@ const IncentiveTable: React.FC<IncentiveTableProps> = ({ dataIncentive }) => {
 
     return (
         <>  
-            <FilterRow>
+            <FilterRow className='filter'>
                 <label htmlFor="country">Filter By Country</label>
                 <select
                     id="country"
@@ -60,8 +64,18 @@ const IncentiveTable: React.FC<IncentiveTableProps> = ({ dataIncentive }) => {
                 <table>
                     <thead>
                         <tr>
-                            <th>EVENT/ PROGRAM NAME</th>
-                            <th>INCENTIVE PER STUDENT</th>
+                            {/* Conditional rendering of table headers */}
+                            {selectedEvent === 'Study Aboard' ? (
+                                <>
+                                    <th>Country</th>
+                                    <th>Incentive Per Student</th>
+                                </>
+                            ) : (
+                                <>
+                                    <th>Event/Program Name</th>
+                                    <th>Incentive Per Student</th>
+                                </>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -70,13 +84,24 @@ const IncentiveTable: React.FC<IncentiveTableProps> = ({ dataIncentive }) => {
                             if (selectedCountry === 'All' || incentive.country === selectedCountry) {
                                 return (
                                     <tr key={index}>
-                                        <td>
+                                        {/* <td>
                                             {incentive.programName && <span>{incentive.programName} </span>}
                                             {incentive.groupName && <span> {incentive.groupName}</span>}
                                             {!(incentive.programName && incentive.groupName) && incentive.country && <span> - {incentive.country}</span>}
+                                        </td> */}
+                                        <td>
+                                        {selectedEvent === 'Study Abroad' ? (
+                                            <span>{incentive.country}</span>
+                                        ) : (
+                                            <>
+                                                {incentive.programName && <span>{incentive.programName} </span>}
+                                                {incentive.groupName && <span> {incentive.groupName}</span>}
+                                                {!(incentive.programName && incentive.groupName) && incentive.country && <span> - {incentive.country}</span>}
+                                            </>
+                                        )}
                                         </td>
                                         <td>                                        
-                                            {incentive.amount}
+                                            {formatPrice(incentive.amount)}
                                         </td>
                                     </tr>
                                 );
@@ -104,6 +129,14 @@ const FilterRow = styled.div`
     display: flex;
     gap: 20px;
     align-items: center;
+    ${media("<=smallPhone")} {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        select {
+            width: 100%;
+        }
+    }
     select {
         padding: 20px 40px 20px 20px;
         border-radius: 10px;
@@ -113,6 +146,7 @@ const FilterRow = styled.div`
         color: rgba(0, 0, 0, 0.60);
         -webkit-appearance: none;
         display: block;
+        text-transform: capitalize;
         -moz-appearance: none;
         background-image: linear-gradient(45deg, transparent 50%, black 50%), linear-gradient(135deg, black 50%, transparent 50%), linear-gradient(to right, transparent, transparent);
         background-position: calc(100% - 20px) calc(1.6em + 2px), calc(100% - 15px) calc(1.6em + 2px),100% 0;

@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StudentList } from '@/types/global';
 import styled from 'styled-components';
-import formatPrice, { formatDate, getMonthName } from "../../../../utils/helper";
+import formatPrice, {formatDate, getMonthName} from "../../../../utils/helper";
 import StudentListPagination from "@/components/molecules/StudentList/StudentListPagination";
 import { media } from '@/utils/media';
 import api from '@/utils/api';
 
 
 interface StudentListTableProps {
-  // dataStudent: StudentList[];
-  selectedEvent: number;
+    // dataStudent: StudentList[];
+    selectedEvent: number;
 }
 
 type QueryStudentList = {
@@ -20,39 +20,45 @@ type QueryStudentList = {
 }
 
 function getClassBasedOnStatus(status: string) {
-  if (status === 'Registered') {
-    return 'blue';
-  } else if (status === 'On Process') {
-    return 'orange';
-  } else if (status === 'Sucessfull') {
-    return 'green';
-  } else if (status === 'Unsuccessful') {
-    return 'red';
-  } else if (status === 'Cancelled') {
-    return 'red';
-  } else if (status === 'Paid') {
-    return 'purple';
-  } else {
-    return 'orange';
-  }
+    if (status === 'Registered') {
+        return 'blue';
+    } else if (status === 'On Process') {
+        return 'orange';
+    } else if (status === 'Sucessfull') {
+        return 'green';
+    } else if (status === 'Unsuccessful') {
+        return 'red';
+    } else if (status === 'Cancelled') {
+        return 'red';
+    } else if (status === 'Paid') {
+        return 'purple';
+    } else {
+        return 'orange';
+    }
 }
 
 const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) => {
-  const itemsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedMonth, setSelectedMonth] = useState(0);
-  const [selectedYear, setSelectedYear] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState(7);
-  const [filteredData, setFilteredData] = useState<StudentList[]>([]);
-  const [isLoad, setIsLoad] = useState(false);
-  // const [selectedProgramCategory, setSelectedProgramCategory] = useState('All'); // Initialize with 'All'
+    const itemsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedMonth, setSelectedMonth] = useState(0);
+    const [selectedYear, setSelectedYear] = useState(0);
+    const [selectedStatus, setSelectedStatus] = useState(7);
+    const [filteredData, setFilteredData] = useState<StudentList[]>([]);
+    const [isLoad, setIsLoad] = useState(false);
+    // test
+    const [isListEmpty, setIsListEmpty] = useState(false); // Step 1
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
+    const onPageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+    
   const filterData = (month: string, year: string, status: string) => {
-    setSelectedMonth(parseInt(month));
+    if (year === '0') {
+      setSelectedMonth(0);
+    } else {
+      setSelectedMonth(parseInt(month));
+    }
     setSelectedYear(parseInt(year));
     setSelectedStatus(parseInt(status));
   };
@@ -61,6 +67,7 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
     return new Date(year, month, endDate.getDate())
 
   }
+
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -100,8 +107,12 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
           signal: signal
         });
         setIsLoad(false);
-        setFilteredData(response.data.data);
-        console.log(response.data.data);
+        // setFilteredData(response.data.data.submissions);
+        // console.log(response.data.data);
+        const fetchedData = response.data.data.submissions;
+        setFilteredData(fetchedData);
+        setIsListEmpty(fetchedData.length === 0); // Step 2
+
       } catch (error) {
         setIsLoad(false);
         console.error('Error fetching filtered data:', error);
@@ -113,139 +124,127 @@ const StudentListTable: React.FC<StudentListTableProps> = ({ selectedEvent }) =>
       controller.abort()
     }
   }, [selectedMonth, selectedYear, selectedStatus, selectedEvent]);
-  // useEffect(() => {
-  //     let filtered = dataStudent;
-
-  //     if (selectedMonth !== 'All') {
-  //       console.log('Filtering by month:', selectedMonth);
-  //       filtered = filtered.filter(StudentList => formatDate(StudentList.date).split('/')[0] === selectedMonth);
-  //     }
-  //     if (selectedYear !== 'All') {
-  //       filtered = filtered.filter(StudentList => new Date(StudentList.date).getFullYear().toString() === selectedYear);
-  //     }
-
-  //     if (selectedStatus !== 'All') {
-  //         filtered = filtered.filter(StudentList => StudentList.status === selectedStatus);
-  //     }
-
-  //     setFilteredData(filtered);
-  //     // Reset the current page to 1 when applying a filter
-  //     setCurrentPage(1);
-
-  // }, [selectedMonth, selectedYear, selectedStatus, dataStudent]);
 
   const sortedData = filteredData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const dataToDisplay = filteredData.slice(startIndex, endIndex);
+  const dataToDisplay = filteredData?.slice(startIndex, endIndex);
 
   const uniqueMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Agustus', 'September', 'October', 'November', 'December'];
-  const uniqueYears = Array.from({ length: 51 }, (_, i) => new Date().getFullYear() - i);
+  const uniqueYears = Array.from({ length: new Date().getFullYear() - 2022 }, (_, i) => new Date().getFullYear() - i);
   const uniqueStatus = ['Registered', 'On Process', 'Successful', 'Cancelled', 'Paid', 'Failed', 'Withdrawal Requested'];
 
-  return (
-    <>
-      <FilterRow>
-        <Column>
-          <label htmlFor="month">FILTER BY MONTH</label>
-          <select
-            disabled={isLoad}
-            id="month"
-            onChange={(e) => filterData(e.target.value, selectedYear.toString(), selectedStatus.toString())}
-            value={selectedMonth}
-          >
-            <option value={0}>All Months</option>
-            {uniqueMonths.map((month, index) => (
-              <option key={index} value={index + 1}>
-                {month}
-              </option>
-            ))}
-          </select>
-        </Column>
-        <Column>
-          <label htmlFor="year">FILTER BY YEAR</label>
-          <select
-            disabled={isLoad}
-            id="year"
-            onChange={(e) => filterData(selectedMonth.toString(), e.target.value, selectedStatus.toString())}
-            value={selectedYear}
-          >
-            <option value={0}>All Years</option>
-            {uniqueYears.map((year, index) => (
-              <option key={index} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </Column>
-        <Column>
-          <label htmlFor="status">FILTER BY STATUS</label>
-          <select
-            disabled={isLoad}
-            id="status"
-            onChange={(e) => filterData(selectedMonth.toString(), selectedYear.toString(), e.target.value)}
-            value={selectedStatus}
-          >
-            <option value='7'>All Status</option>
-            {uniqueStatus.map((status, index) => (
-              <option key={index} value={index}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </Column>
-      </FilterRow>
-      <TableParent>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Name</th>
-              <th>Phone Number</th>
-              <th>SCHOOL</th>
-              <th>Program Name</th>
-              <th>EARNING</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataToDisplay.map((StudentList, index) => (
-              <tr key={index}>
-                <td>
-                  {formatDate(StudentList.date)}
-                </td>
-                <td>
-                  {StudentList.name}
-                </td>
-                <td>
-                  {StudentList.phoneNumber}
-                </td>
-                <td>
-                  {StudentList.school}
-                </td>
-                <td>
-                  {StudentList.programName}
-                </td>
-                <td>
-                  {formatPrice(StudentList.earning)}
-                </td>
-                <td>
-                  <span className={getClassBasedOnStatus(StudentList.status)}>
-                    {StudentList.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </TableParent>
-      <StudentListPagination
-        data={filteredData}
-        itemsPerPage={itemsPerPage}
-        onPageChange={onPageChange}
-      />
-    </>
-  );
+    return (
+        <>
+            <FilterRow>
+              <Column>
+                <label htmlFor="year">FILTER BY YEAR</label>
+                <select
+                  disabled={isLoad}
+                  id="year"
+                  onChange={(e) => filterData(selectedMonth.toString(), e.target.value, selectedStatus.toString())}
+                  value={selectedYear}
+                >
+                  <option value={0}>All Years</option>
+                  {uniqueYears.map((year, index) => (
+                    <option key={index} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </Column>
+              <Column>
+                <label htmlFor="month">FILTER BY MONTH</label>
+                <select
+                  disabled={isLoad || selectedYear === 0}
+                  id="month"
+                  onChange={(e) => filterData(e.target.value, selectedYear.toString(), selectedStatus.toString())}
+                  value={selectedMonth}
+                >
+                  <option value={0}>All Months</option>
+                  {uniqueMonths.map((month, index) => (
+                    <option key={index} value={index + 1}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </Column>
+              <Column>
+                <label htmlFor="status">FILTER BY STATUS</label>
+                <select
+                  disabled={isLoad}
+                  id="status"
+                  onChange={(e) => filterData(selectedMonth.toString(), selectedYear.toString(), e.target.value)}
+                  value={selectedStatus}
+                >
+                  <option value='7'>All Status</option>
+                  {uniqueStatus.map((status, index) => (
+                    <option key={index} value={index}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </Column>
+            </FilterRow>
+            {isListEmpty ? ( // Step 3
+              <EmptyRow>
+                  <p>No student records found</p>
+              </EmptyRow>
+            ) : (
+            <TableParent>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>SCHOOL</th>
+                        <th>Program Name</th>
+                        <th>EARNING</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {dataToDisplay.map((StudentList, index) => (
+                        <tr key={index}>
+                            <td>
+                                {formatDate(StudentList.date)}
+                            </td>
+                            <td>
+                                {StudentList.name}
+                            </td>
+                            <td>
+                                {StudentList.phoneNumber}
+                            </td>
+                            <td>
+                                {StudentList.school}
+                            </td>
+                            <td>
+                                {StudentList.programName}
+                            </td>
+                            <td>
+                                {formatPrice(StudentList.earning)}
+                            </td>
+                            <td>
+                                <span className={getClassBasedOnStatus(StudentList.status)}>
+                                    {StudentList.status}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </TableParent>
+            )}
+            {!isListEmpty && ( // Step 3
+              <StudentListPagination
+                  data={filteredData}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={onPageChange}
+              />
+            )}
+        </>
+    );
 };
 
 export default StudentListTable;
@@ -297,8 +296,20 @@ const FilterRow = styled.div`
     }
   }
 `
-
-const TableParent = styled.div`
+const EmptyRow = styled.div `
+  p {
+    color: var(--primary);
+    padding: 2rem;
+    font-weight: 600;
+    font-size: 1.6rem;
+    text-align: center;
+    ${media("<=smallPhone")} {
+      font-size: 1.2rem;
+      padding: 1rem;
+    }
+  }
+`
+const TableParent = styled.div `
   width: 100%;
   table {
     width: 100%;

@@ -14,9 +14,9 @@ export const axiosError = (
     closureMainError?: (error: Error) => void
 ) => {
     if (axios.isAxiosError<MainResponse<ErrorData>>(error)) {
-        console.log(error.status);
-        console.error(error.response);
-        alert(error);
+        // console.log(error.status);
+        // console.error(error.response);
+        // alert(error);
         return closureAxiosError ? closureAxiosError(error) : false;
         // Do something with this error...
     } else {

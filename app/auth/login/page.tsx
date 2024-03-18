@@ -2,6 +2,7 @@
 import BannerLogin from '@/components/organisms/Auth/Banner';
 import BasicSection from '@/components/atoms/BasicSection';
 import Container from '@/components/atoms/Container';
+import ClientMiddleware from '@/components/molecules/ClientMiddleware';
 
 
 const LoginContent = {
@@ -12,12 +13,12 @@ const LoginContent = {
 
 export default function Page() {
   return (
-    <>
-      <BasicSection className="first-child">
+    <ClientMiddleware>
+      <BasicSection className="first-child login-section">
         <Container>
           <BannerLogin data={LoginContent} />
         </Container>
       </BasicSection>
-    </>
+    </ClientMiddleware>
   );
 };

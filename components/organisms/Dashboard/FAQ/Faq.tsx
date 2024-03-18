@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {Accordion, AccordionBody, AccordionHeader, AccordionItem} from "react-headless-accordion";
 import Paragraph from "@/components/atoms/Paragraph";
 import PlusIcon from "@/components/atoms/PlusMinus";
+import { media } from "@/utils/media";
 
 interface FAQItem {
     title: string;
@@ -69,7 +70,7 @@ const Items = styled.div`
 const SAccordionHeader = styled(AccordionHeader)`
     display: flex;
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     background-color: transparent;
     appearance: none;
@@ -80,10 +81,14 @@ const SAccordionHeader = styled(AccordionHeader)`
     cursor: pointer;
     margin-bottom: 30px;
     h5 {
-        font-family: '__Poppins_baf6f6';
+        font-family: '__Poppins_ad20f7';
         font-size: 18px;
         color: var(--primary);
         margin-bottom: 0    ;
+        text-align: left;
+        ${media("<=smallPhone")} {
+            font-size: 16px;
+        }
     }
     svg {
         display: flex;
