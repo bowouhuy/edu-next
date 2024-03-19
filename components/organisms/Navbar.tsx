@@ -1,13 +1,13 @@
 'use client'
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import Logo from "../molecules/Navbar/Logo";
-import VisitWebsite from "../molecules/Navbar/VisitWebsite";
+import Logo from "@/components/molecules/Navbar/Logo";
+import VisitWebsite from "@/components/molecules/Navbar/VisitWebsite";
 import styled, { css } from 'styled-components';
-import Container from "../atoms/Container";
-import MenuItem from '../molecules/Navbar/MenuItem';
+import Container from "@/components/atoms/Container";
+import MenuItem from '@/components/molecules/Navbar/MenuItem';
 import { media } from '@/utils/media';
-import LogOut from '../molecules/Navbar/LogOut';
+import LogOut from '@/components/molecules/Navbar/LogOut';
 import {isAuthenticated} from '@/utils/auth';
 
 

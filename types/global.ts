@@ -66,3 +66,8 @@ export interface ProgramName {
     id: number;
     name: string;
 }
+
+export type Option = {
+    'name': string,
+    'label': string,
+}

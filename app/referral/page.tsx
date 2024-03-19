@@ -11,15 +11,15 @@ import WithdrawCardInfo from '@/components/organisms/Dashboard/SubmitReferall/Wi
 import React, { FormEvent, Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ClientMiddleware from '@/components/molecules/ClientMiddleware';
-import { Participant, SchoolDetail } from '@/types/referral';
+import { Country, Participant, SchoolDetail, University, UniversityGroup } from '@/types/referral';
 import { media } from '@/utils/media';
 import api from "../../utils/api";
 import AffiliateProfileInfo from "../../components/organisms/Dashboard/Affiliate/AffiliateProfileInfo";
-import {ProgramName, ReferralType} from "../../types/global";
+import { Option, ProgramName, ReferralType } from "../../types/global";
 import Link from "next/link";
 import RemoveRow from "../../components/atoms/RemoveRow";
 import TrashIcon from '../../components/atoms/TrashIcon';
-
+import RSelect from 'react-select/async';
 
 const submitReferall = {
     title: 'Nihilne te nocturnum praesidium Palati, nihil urbis vigiliae.',
@@ -70,11 +70,40 @@ const WithdrawInfo = {
 
 async function fetchDataAffiliate() {
     try {
-        const response = await api.get(process.env.NEXT_PUBLIC_API_URL+'affiliate');
+        const response = await api.get(process.env.NEXT_PUBLIC_API_URL + 'affiliate');
 
         return response.data; // Ini akan mengembalikan data dari API.
     } catch (error) {
         // Handle error jika terjadi kesalahan dalam permintaan.
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+
+async function fetchDataUniversities(countryId: number) {
+    try {
+        if (!countryId) {
+            throw new Error('Country id is not defined!')
+        }
+        const response = await api.get<MainResponse<UniversityGroup[]>>('university-groups', {
+            params: {
+                country_id: countryId
+            }
+        });
+
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+
+async function fetchDataCountries() {
+    try {
+        const response = await api.get<MainResponse<Country[]>>('countries');
+
+        return response.data.data;
+    } catch (error) {
         console.error('Error fetching data:', error);
         throw error;
     }
@@ -85,8 +114,22 @@ const SubmitReferallPage: React.FC = () => {
     const [programNameFieldVisible, setProgramNameFieldVisible] = useState(true);
     const [response, setResponse] = useState('');
     const [error, setError] = useState('');
+    const [countries, setCountries] = useState<Country[]>([]);
+    const [universities, setUniversities] = useState<UniversityGroup[]>([]);
     const [programNames, setProgramNames] = useState<ProgramName[]>([]);
     const [referallTypes, setReferallTypes] = useState<ReferralType[]>([]);
+    // State to manage form data
+    const [formData, setFormData] = useState<{
+        referralType: string,
+        programName: string,
+        country: string,
+        university?: number,
+    }>({
+        referralType: '',
+        programName: '',
+        country: '',
+        university: 0,
+    });
 
     useEffect(() => {
         fetchDataAffiliate().then((data) => {
@@ -94,7 +137,24 @@ const SubmitReferallPage: React.FC = () => {
         }).catch((error) => {
             // Handle error jika terjadi kesalahan dalam permintaan.
         });
+        fetchDataCountries().then((data) => {
+            setCountries(data);
+        }).catch((error) => { })
     }, []);
+
+    useEffect(() => {
+        let ignore = false;
+        if (formData.country === '') {
+            return () => { ignore = true }
+        }
+        if (!ignore) {
+            fetchDataUniversities(parseInt(formData.country)).then((data) => {
+                setUniversities(data)
+                ignore = true
+            })
+        }
+        return () => { ignore = true }
+    }, [formData.country])
 
     const initData: SchoolDetail = {
         school: '',
@@ -128,11 +188,11 @@ const SubmitReferallPage: React.FC = () => {
             let schoolDetail = schoolDetails;
             schoolDetail[index][key] = value;
             setSchoolDetails(schoolDetail);
-            console.log(schoolDetails);
+            // console.log(schoolDetails);
         } else {
             console.error('Invalid event object or event.target.value is undefined.');
         }
-        console.log('The schoolDetails array has been updated:', schoolDetails);
+        // console.log('The schoolDetails array has been updated:', schoolDetails);
     }
 
     /**
@@ -143,7 +203,7 @@ const SubmitReferallPage: React.FC = () => {
      * @returns void
      */
     const changeParticipantValue = (index: number, value: Participant, indexParticipant?: number) => {
-        console.log('indexParticipant:', indexParticipant, 'value:', value);
+        // console.log('indexParticipant:', indexParticipant, 'value:', value);
         let newSchoolDetails = schoolDetails;
         if (indexParticipant !== undefined) {
             let participants = schoolDetails[index].participants
@@ -157,7 +217,7 @@ const SubmitReferallPage: React.FC = () => {
             newSchoolDetails[index].participants.push(value);
         }
         setSchoolDetails([...newSchoolDetails]);
-        console.log('The schoolDetails array has been updated:', schoolDetails);
+        // console.log('The schoolDetails array has been updated:', schoolDetails);
 
     }
 
@@ -169,7 +229,7 @@ const SubmitReferallPage: React.FC = () => {
         setSchoolDetails([...newSchoolDetails]);
     }
     const addSchoolRow = () => {
-        console.log('clicked')
+        // console.log('clicked')
         // Add a new empty school to the schools array
         setSchoolDetails([...schoolDetails, { ...initData }]);
     };
@@ -204,13 +264,6 @@ const SubmitReferallPage: React.FC = () => {
         }
     }
 
-    // State to manage form data
-    const [formData, setFormData] = useState({
-        referralType: '',
-        programName: '',
-        countryGroupname: '',
-    });
-
     // Function to fetch referral types when the component mounts
     useEffect(() => {
         const fetchReferralTypes = async () => {
@@ -231,7 +284,7 @@ const SubmitReferallPage: React.FC = () => {
     }, []); // Empty dependency array ensures this effect runs only once when the component mounts
 
     // Function to handle changes in referral type
-    const handleReferralTypeChange = async (event:any) => {
+    const handleReferralTypeChange = async (event: any) => {
         const selectedReferralType = event.target.value;
         setFormData({
             ...formData,
@@ -241,7 +294,7 @@ const SubmitReferallPage: React.FC = () => {
 
         // Fetch program names based on the selected referral type
         try {
-            const response = await api.get('programs/'+selectedReferralType, );
+            const response = await api.get('programs/' + selectedReferralType,);
             if (response) {
                 const data = await response.data.data;
                 setProgramNames(data);
@@ -255,13 +308,57 @@ const SubmitReferallPage: React.FC = () => {
     };
 
     // Function to handle changes in program name
-    const handleProgramNameChange = (event:any) => {
+    const handleProgramNameChange = (event: any) => {
         const selectedProgramName = event.target.value;
         setFormData({
             ...formData,
             programName: selectedProgramName,
         });
     };
+
+    const promiseUniversitySelect = (inputValue: string) =>
+        new Promise<Option[]>((resolve) => {
+            setTimeout(() => {
+                resolve(filterUniversitySelect(inputValue));
+            }, 500);
+        });
+
+
+    const filterUniversitySelect = (inputValue: string) => {
+        let group = [...universities]
+        let clone: University[] = []
+        group.forEach((val) => {
+            clone = [...clone, ...val.universities]
+        });
+        // console.log(clone);
+
+        if (inputValue) {
+            clone = clone.filter((i) =>
+                i.name.toLowerCase().includes(inputValue.toLowerCase())
+            );
+        }
+        if (clone.length > 50) {
+            clone.length = 50
+        }
+        let newArr = clone.map(v => ({ name: v.id.toString(), label: v.name }))
+
+        return newArr;
+    }
+
+    const defaultUniversityOptions = () => {
+        let group = [...universities]
+        let clone: University[] = []
+        group.forEach((val) => {
+            clone = [...clone, ...val.universities]
+        });
+        if (clone.length > 50) {
+            clone.length = 50
+        }
+
+        return clone.map(v => ({ name: v.id.toString(), label: v.name }));
+    }
+
+
     return (
         <ClientMiddleware>
             <SubmitReferall data={submitReferall} />
@@ -295,19 +392,48 @@ const SubmitReferallPage: React.FC = () => {
                                 </FieldRow>
                                 <FieldRow>
                                     <div className='label-group'>
-                                        <label htmlFor="country">CHOOSE COUNTRY & GROUP UNIVERSITY</label>
-                                        <Link href={'/dashboard/profile'} target="_blank">
-                                            <span>Universities Incentives List (PDF)</span>
-                                        </Link>
+                                        <label htmlFor="country">CHOOSE COUNTRY</label>
                                     </div>
-                                    <select id="country" name="country">
-                                        <option value="">Select a Country & Group University</option>
-                                        {eventDetails.countryGroupname.map((country, index) => (
-                                            <option key={index} value={country.name}>
+                                    <select id="country" name="country" onChange={(v) => setFormData({ ...formData, country: v.target.value })}>
+                                        <option value="">Select a Country</option>
+                                        {countries.map((country, index) => (
+                                            <option key={index} value={country.id}>
                                                 {country.name}
                                             </option>
                                         ))}
                                     </select>
+                                </FieldRow>
+                                <FieldRow>
+                                    <div className='label-group'>
+                                        <label htmlFor="country">CHOOSE UNIVERSITY</label>
+                                        <Link href={'/dashboard/profile'} target="_blank">
+                                            <span>Universities Incentives List (PDF)</span>
+                                        </Link>
+                                    </div>
+                                    <RSelect
+                                        className="select"
+                                        classNamePrefix="select"
+                                        isClearable={true}
+                                        // defaultOptions={true}
+                                        // defaultValue={{ label: 'Pilih Kota', name: '' }}
+                                        // formatGroupLabel={ }
+                                        defaultOptions={defaultUniversityOptions()}
+                                        isDisabled={formData.country == ''}
+                                        defaultInputValue=""
+                                        isSearchable={true}
+                                        name="color"
+                                        placeholder="Choose a University"
+                                        loadOptions={(inputValue: string) => promiseUniversitySelect(inputValue)}
+                                        onChange={(v) => setFormData({ ...formData, university: parseInt(v?.name ?? '0') })}
+                                    />
+                                    {/* <select id="country" name="country">
+                                        <option value="">Select a University</option>
+                                        {universities.map((country, index) => (
+                                            <option key={index} value={country.name}>
+                                                {country.name}
+                                            </option>
+                                        ))}
+                                    </select> */}
                                 </FieldRow>
                                 <FieldRow>
                                     {schoolDetails.map((school, index) => (

@@ -5,6 +5,7 @@ import AddParticipant from '@/components/organisms/Submit/AddParticipant';
 import { Participant, SchoolDetail } from '@/types/referral';
 import { media } from '@/utils/media';
 import RSelect from 'react-select/async'
+import { Option } from '@/types/global';
 
 interface SchoolDetailsProps {
     // key : number;
@@ -20,10 +21,6 @@ interface SchoolDetailsProps {
 type Item = {
     'id': string
     'name': string
-}
-type Option = {
-    'name': string,
-    'label': string,
 }
 
 const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSchoolChange, onParticipantChange, onParticipantNew, onParticipantDelete, schoolDetails }) => {
@@ -51,7 +48,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
             })
             .catch((error: any) => console.error('Error fetching cities:', error));
     }, []);
-    
+
     const onHandleCityChange = (value: string) => {
         setSelectedCity(value);
         onCityChange(index, value)
@@ -70,35 +67,35 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
         });
 
 
-        const filterSelect = (type: 'city' | 'school', inputValue: string) => {
-            const arr = type === 'city' ? cities : schools
-            let clone = [...arr]
-            if (inputValue) {
-                clone = clone.filter((i) =>
-                    i.name.toLowerCase().includes(inputValue.toLowerCase())
-                );
-            }
-            let newArr = clone.map(v => ({ name: v.id, label: v.name }))
-            if (newArr.length > 50) {
-                newArr.length = 50
-            }
-            return newArr;
+    const filterSelect = (type: 'city' | 'school', inputValue: string) => {
+        const arr = type === 'city' ? cities : schools
+        let clone = [...arr]
+        if (inputValue) {
+            clone = clone.filter((i) =>
+                i.name.toLowerCase().includes(inputValue.toLowerCase())
+            );
         }
-    
-        const defaultOptions = (type: 'city' | 'school') => {
-            let clone = type === 'city' ? [...cities] : [...schools]
-            if (clone.length > 50) {
-                clone.length = 50
-            }
-    
-            return clone.map(v => ({ name: v.id, label: v.name }));
+        let newArr = clone.map(v => ({ name: v.id, label: v.name }))
+        if (newArr.length > 50) {
+            newArr.length = 50
         }
-    
+        return newArr;
+    }
+
+    const defaultOptions = (type: 'city' | 'school') => {
+        let clone = type === 'city' ? [...cities] : [...schools]
+        if (clone.length > 50) {
+            clone.length = 50
+        }
+
+        return clone.map(v => ({ name: v.id, label: v.name }));
+    }
+
 
     return (
         <SchoolRow>
             <h3>School Details</h3>
-                {/* <span></span> */}
+            {/* <span></span> */}
             <label htmlFor={'city-' + index}>City</label>
             {/* <select
                 id={'city-' + index}
@@ -123,7 +120,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 defaultInputValue=""
                 isSearchable={true}
                 name="color"
-                placeholder ="Choose a City"
+                placeholder="Choose a City"
                 loadOptions={(inputValue: string) => promiseSelect('city', inputValue)}
                 onChange={(v) => onHandleCityChange(v?.name ?? '')}
             />
@@ -143,7 +140,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                 defaultOptions={defaultOptions('school')}
                 isSearchable={true}
                 name="color"
-                placeholder ="Choose a School Name"
+                placeholder="Choose a School Name"
                 loadOptions={(inputValue: string) => promiseSelect('school', inputValue)}
                 onChange={(v) => onHandleSchoolChange(v?.name ?? '')}
             />
@@ -153,7 +150,7 @@ const SchoolDetails: React.FC<SchoolDetailsProps> = ({ index, onCityChange, onSc
                     onNew={(value) => onParticipantNew(index, value)}
                     participants={schoolDetails[index].participants}
                     onChange={(indexParticipant, value) => onParticipantChange(index, indexParticipant, value)} />
-            </Participant>  
+            </Participant>
         </SchoolRow>
     );
 };
