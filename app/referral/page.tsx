@@ -123,12 +123,12 @@ const SubmitReferallPage: React.FC = () => {
         referralType: string,
         programName: string,
         country: string,
-        university?: number,
+        universityGroup?: number,
     }>({
         referralType: '',
         programName: '',
         country: '',
-        university: 0,
+        universityGroup: 0,
     });
 
     useEffect(() => {
@@ -237,15 +237,23 @@ const SubmitReferallPage: React.FC = () => {
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        const formData = new FormData(event.currentTarget);
-        const programName = programNameFieldVisible ? formData.get('program-name') : '';
-
-        var data = {
-            countryGroupname: formData.get('country'),
-            referralType: formData.get('referral-type'),
-            programName: formData.get('program-name'),
+        let data: {
+            countryGroupname: string,
+            referralType: number,
+            universityGroup: number,
+            schoolDetails: SchoolDetail[],
+            programName?: string
+        } = {
+            countryGroupname: formData.country,
+            referralType: parseInt(formData.referralType),
+            universityGroup: formData.universityGroup ?? 0,
             schoolDetails: schoolDetails
         }
+
+        if (programNameFieldVisible) {
+            data.programName = formData.programName
+        }
+
         // console.log('Form submitted successfully!', data);
         setResponse('Form submitted successfully!');
         setError('');
@@ -326,36 +334,33 @@ const SubmitReferallPage: React.FC = () => {
 
     const filterUniversitySelect = (inputValue: string) => {
         let group = [...universities]
-        let clone: University[] = []
-        group.forEach((val) => {
-            clone = [...clone, ...val.universities]
-        });
+        // let clone: University[] = []
+        // group.forEach((val) => {
+        //     clone = [...clone, ...val.universities]
+        // });
         // console.log(clone);
 
         if (inputValue) {
-            clone = clone.filter((i) =>
+            group = group.filter((i) =>
                 i.name.toLowerCase().includes(inputValue.toLowerCase())
             );
         }
-        if (clone.length > 50) {
-            clone.length = 50
+        if (group.length > 50) {
+            group.length = 50
         }
-        let newArr = clone.map(v => ({ name: v.id.toString(), label: v.name }))
+        let newArr = group.map(v => ({ name: v.id.toString(), label: v.name }))
 
         return newArr;
     }
 
     const defaultUniversityOptions = () => {
         let group = [...universities]
-        let clone: University[] = []
-        group.forEach((val) => {
-            clone = [...clone, ...val.universities]
-        });
-        if (clone.length > 50) {
-            clone.length = 50
+
+        if (group.length > 50) {
+            group.length = 50
         }
 
-        return clone.map(v => ({ name: v.id.toString(), label: v.name }));
+        return group.map(v => ({ name: v.id.toString(), label: v.name }));
     }
 
 
@@ -424,7 +429,7 @@ const SubmitReferallPage: React.FC = () => {
                                         name="color"
                                         placeholder="Choose a University"
                                         loadOptions={(inputValue: string) => promiseUniversitySelect(inputValue)}
-                                        onChange={(v) => setFormData({ ...formData, university: parseInt(v?.name ?? '0') })}
+                                        onChange={(v) => setFormData({ ...formData, universityGroup: parseInt(v?.name ?? '0') })}
                                     />
                                     {/* <select id="country" name="country">
                                         <option value="">Select a University</option>
